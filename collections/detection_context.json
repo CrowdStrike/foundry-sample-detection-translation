@@ -1,0 +1,15 @@
+{
+  "properties": {
+    "compositeId": {
+      "type": "string",
+      "title": "CompositeId",
+      "x-cs-indexable": true
+    },
+    "content": { "type": "string", "title": "Content" },
+    "title": { "type": "string", "title": "Title" },
+
+    "type": { "type": "string", "title": "Type" }
+  },
+  "type": "object",
+  "required": ["compositeId"]
+}

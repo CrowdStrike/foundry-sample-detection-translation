@@ -7,3 +7,6 @@ __pycache__/
 
 # For Go functions
 go.sum
+
+# Node dependencies
+node_modules

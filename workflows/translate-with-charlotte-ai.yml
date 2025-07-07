@@ -1,0 +1,58 @@
+name: translate-with-charlotte-ai
+provision_on_install: true
+trigger:
+    next:
+        - charlotte_ai___llm_completion_1e6dd1f6
+    name: On demand
+    parameters:
+        $schema: https://json-schema.org/draft-07/schema
+        properties:
+            compositeId:
+                type: string
+            htmlContent:
+                type: string
+            language:
+                type: string
+            objectKey:
+                type: string
+            title:
+                type: string
+            type:
+                type: string
+        required:
+            - language
+            - htmlContent
+            - compositeId
+            - title
+            - type
+            - objectKey
+        type: object
+        description: This generated schema may need tweaking. In particular format fields are attempts at matching workflow field types but may not be correct.
+actions:
+    add_object_to_detection_context_d03396f5:
+        id: collections.detection_context.create
+        properties:
+            compositeId: ${compositeId}
+            content: ${charlotte_ai___llm_completion_1e6dd1f6.FaaS.nlpassistantapi.llminvocator_handler.completion}
+            custom_storage_object_key: ${objectKey}
+            title: ${title}
+            type: ${type}
+    charlotte_ai___llm_completion_1e6dd1f6:
+        next:
+            - add_object_to_detection_context_d03396f5
+        id: bdfecafafdb44919a458fcf51d6b93a7_98dec86072334d24b37dd798098cfd63
+        properties:
+            model_name: Claude 3.7 Sonnet
+            temperature: 0.1
+            user_prompt: |-
+                Translate the following content into ${language}
+
+                Rules
+                - Preserve the HTML formatting if  possible
+                - Respond only with the translated content
+                - Do not translate titles (eg <h1>, <h2>, <dt>)
+
+                Content
+                ${htmlContent}}
+output_fields:
+    - charlotte_ai___llm_completion_1e6dd1f6.FaaS.nlpassistantapi.llminvocator_handler.completion

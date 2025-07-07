@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Hello World</title>
+    <style>
+      #translationSlot:empty,
+      #contextSlot:empty {
+        display: none;
+      }
+    </style>
+
+    <script type="importmap">
+      {
+        "imports": {
+          "@crowdstrike/foundry-js": "https://assets.foundry.crowdstrike.com/foundry-js@0.17.1/index.js"
+        }
+      }
+    </script>
+
+    <link
+      rel="stylesheet"
+      href="https://assets.foundry.crowdstrike.com/tailwind-toucan-base@5.0.0/toucan.css"
+    />
+  </head>
+
+  <body class="bg-basement">
+    <div id="translationSlot" class="p-4"></div>
+    <div id="contextSlot" class="p-4">
+      <div class="space-y-2 rounded bg-surface-md p-3 shadow-base">
+        <div class="type-md min-h-6 text-titles-and-attributes">
+          Loading detection context...
+        </div>
+      </div>
+    </div>
+
+    <script src="./app.js" type="module"></script>
+  </body>
+</html>

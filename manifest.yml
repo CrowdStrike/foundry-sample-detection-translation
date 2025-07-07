@@ -1,0 +1,83 @@
+name: Detection translation and context
+description: Provides an extension socket to detections for you to add additional context
+logo: ""
+vendor: ""
+vendor_products: []
+use_case: Endpoint security
+manifest_version: "2023-05-09"
+ignored:
+    - .+/node_modules$
+    - .+/node_modules/.+
+    - .+/venv$
+    - .+/venv/.+
+ui:
+    homepage: pages.detection-context-explorer
+    extensions:
+        - name: Translation and context
+          description: ""
+          path: ui/extensions/translation-and-context/dist
+          entrypoint: ui/extensions/translation-and-context/dist/index.html
+          sockets:
+            - ngsiem.workbench.details
+            - activity.detections.details
+            - xdr.detections.panel
+          content_security_policy:
+            connect-src: []
+            style-src: []
+            style-src-elem: []
+            script-src: []
+            form-action: []
+            img-src: []
+            media-src: []
+            object-src: []
+          permissions: []
+          is_ui_builder: false
+    pages:
+        detection-context-explorer:
+            name: Detection context explorer
+            description: A centralized interface for viewing, editing, deleting, and creating detection context entries to enhance threat intelligence and investigation capabilities.
+            path: ui/pages/detection-context-explorer/src/dist
+            entrypoint: ui/pages/detection-context-explorer/src/dist/index.html
+            content_security_policy:
+                connect-src: []
+                style-src: []
+                style-src-elem: []
+                script-src: []
+                form-action: []
+                img-src: []
+                media-src: []
+                object-src: []
+            permissions: []
+    dashboards: {}
+    navigation:
+        links:
+            - path: /
+              name: Detection context explorer
+              permissions: []
+              ref: pages.detection-context-explorer
+api_integrations:
+    - name: Crowdstrike alerts and message-center
+      description: ""
+      path: api-integrations/Crowdstrike_alerts_and_message-center.json
+rtr_scripts: []
+collections:
+    - name: detection_context
+      description: Repository that maintains contextual information linked to security detections for improved analysis and response.
+      schema: collections/detection_context.json
+      permissions: []
+      workflow_integration:
+        system_action: false
+        tags: []
+auth:
+    scopes: []
+    permissions: {}
+    roles: []
+functions: []
+workflows:
+    - name: translate-with-charlotte-ai
+      path: workflows/translate-with-charlotte-ai.yml
+parsers: []
+logscale:
+    saved_searches: []
+lookup_files: []
+docs: {}

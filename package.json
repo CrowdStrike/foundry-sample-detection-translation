@@ -1,0 +1,16 @@
+{
+  "name": "foundry-sample-detection-context",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:extension": "cd ui/extensions/translation-and-context && pnpm i && pnpm build",
+    "build:page": "cd ui/pages/detection-context-explorer && pnpm i && pnpm build",
+    "build": "pnpm build:extension && pnpm build:page"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.11.0"
+}
