@@ -106,7 +106,9 @@ Once the deployment has finished, you can release the app:
 foundry apps release
 ```
 
-Next, go to **Foundry** > **App catalog**, find your app, and install it. Go to **Fusion SOAR** > **Workflows** to see the scheduled workflow from this app.
+Next, go to **Foundry** > **App catalog**, find your app, and install it. You will be requested to add the API credentials for the app, you can create them in Support and resources > API clients and keys.
+
+Once it's installed you can navigate to a detection and look for the Translation and context at the right sidebar.
 
 ## About this sample app
 
