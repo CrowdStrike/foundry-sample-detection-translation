@@ -83,7 +83,8 @@ export function CollectionManagement() {
     }
 
     try {
-      const key = `${newEntry.compositeId.replace(/[^\w\-\.]/g)}_${
+      // Fix the regex to properly replace invalid characters with empty string
+      const key = `${newEntry.compositeId.replace(/[^\w\-\.]/g, "")}_${
         newEntry.type
       }`;
       await collection.write(key, {

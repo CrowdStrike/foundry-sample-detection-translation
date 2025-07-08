@@ -4,10 +4,12 @@
   "description": "",
   "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build:extension": "cd ui/extensions/translation-and-context && pnpm i && pnpm build",
     "build:page": "cd ui/pages/detection-context-explorer && pnpm i && pnpm build",
-    "build": "pnpm build:extension && pnpm build:page"
+    "build": "pnpm build:extension && pnpm build:page",
+    "test:extension": "cd ui/extensions/translation-and-context && pnpm i && pnpm test",
+    "test:page": "cd ui/pages/detection-context-explorer && pnpm i && pnpm test",
+    "test": "pnpm test:extension && pnpm test:page"
   },
   "keywords": [],
   "author": "",
