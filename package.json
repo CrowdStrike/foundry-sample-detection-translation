@@ -1,8 +1,8 @@
 {
-  "name": "foundry-sample-detection-context",
+  "name": "foundry-sample-detection-translation",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:extension": "cd ui/extensions/translation-and-context && pnpm i && pnpm build",
@@ -11,6 +11,6 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "packageManager": "pnpm@10.11.0"
 }
