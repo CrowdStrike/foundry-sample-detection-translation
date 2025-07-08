@@ -46,6 +46,10 @@ jobs:
         working-directory: ui/extensions/translation-and-context
         run: pnpm build
 
+      - name: Run tests for translation-and-context
+        working-directory: ui/extensions/translation-and-context
+        run: pnpm test
+
       - name: Install dependencies for detection-context-explorer
         working-directory: ui/pages/detection-context-explorer
         run: pnpm install
@@ -53,3 +57,7 @@ jobs:
       - name: Build detection-context-explorer
         working-directory: ui/pages/detection-context-explorer
         run: pnpm build
+
+      - name: Run tests for detection-context-explorer
+        working-directory: ui/pages/detection-context-explorer
+        run: pnpm test
