@@ -77,11 +77,19 @@ async function main() {
         ({ object_key }) => object_key === objectKey
       );
 
-      const translationHtml = translationEntry
-        ? contextEntryHtml(translationEntry)
-        : contextEntryHtml({
-            title,
-            content: `
+      let translationHtml = "";
+
+      if (translationEntry)
+        translationHtml = contextEntryHtml(translationEntry);
+      else if (language === "en")
+        translationHtml = contextEntryHtml({
+          title,
+          content: `Your browser language is already configured in English. No translation needed.`,
+        });
+      else
+        translationHtml = contextEntryHtml({
+          title,
+          content: `
         <div>
           <p>There is no yet translation available for this detection. Click in the button to get an AI translation of the detection details.<p>
           <p>The translation will use Charlotte AI credit</p>
@@ -90,7 +98,7 @@ async function main() {
             Translate detection details
           </button>
         </div>`,
-          });
+        });
 
       translationSlot.innerHTML = translationHtml;
       const otherEntries = entries.filter(
