@@ -1,14 +1,15 @@
 {
-  "name": "context",
+  "name": "translation-and-context",
   "version": "1.0.0",
   "main": "index.js",
+  "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "node build.js"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "description": "",
   "dependencies": {
     "dompurify": "^3.2.6",

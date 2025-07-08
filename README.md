@@ -11,7 +11,12 @@ This app is one of several App Templates included in Foundry that you can use to
 
 ## Description
 
-_A description of this app's use case and what it does._
+Enhance your security operations with this powerful extension that leverages Charlotte AI to provide translation of detection alerts. This application allows security teams to:
+
+- Access AI-powered translations of detection data for improved clarity
+- Add customized context to any detection for better team communication
+- Streamline investigation workflows with enriched detection information
+- Maintain comprehensive documentation of security events
 
 ## Prerequisites
 
@@ -108,16 +113,69 @@ foundry apps release
 
 Next, go to **Foundry** > **App catalog**, find your app, and install it. You will be requested to add the API credentials for the app, you can create them in Support and resources > API clients and keys.
 
-Once it's installed you can navigate to a detection and look for the Translation and context at the right sidebar.
+Once it's installed you can find the **Translation and context** extension in the right sidebar of detections:
+
+- Next-Gen SIEM > Monitor and investigate > Incidents
+- Endpoint security > Monitor > Endpoint detections
+- Next-Gen SIEM > Monitor and investigate > Detections
 
 ## About this sample app
 
-Enhance your security operations with this powerful extension that leverages Charlotte AI to provide intelligent translation of detection alerts. This application allows security teams to:
+This sample app showcases a Foundry application that enhances detection alerts with AI-powered translations and custom contextual information. The app demonstrates how various Foundry artifacts can work together to provide extended functionality for security operations teams.
 
-- Access AI-powered translations of detection data for improved clarity
-- Add customized context to any detection for better team communication
-- Streamline investigation workflows with enriched detection information
-- Maintain comprehensive documentation of security events
+### Architecture and Components
+
+The application consists of several integrated components working together:
+
+1. **UI Extensions**:
+
+   - A sidebar extension ("Translation and context") that integrates into detection views within the Falcon platform
+   - Provides an interface for viewing and managing translations and additional context for security detections
+
+2. **UI Pages**:
+
+   - "Detection context explorer" - A centralized management interface for viewing, editing, and creating detection context entries
+
+3. **Foundry Collections**:
+
+   - `detection_context` collection - Stores all translated content and contextual information linked to detections
+   - Uses a schema with properties for `compositeId` (unique identifier), `content` (HTML content), `title`, and `type`
+
+4. **Workflows**:
+
+   - `translate-with-charlotte-ai` - Orchestrates the translation process using Charlotte AI
+   - Takes detection content, requested language, and metadata as inputs
+   - Uses Charlotte AI to perform translations while preserving HTML formatting
+   - Stores translated content back to the `detection_context` collection
+
+5. **API Integrations**:
+   - `Crowdstrike alerts and message-center` - Provides access to detection data, comments, and case information
+
+### How It Works
+
+1. **Detection Translation**:
+
+   - When viewing a detection, the extension loads in the sidebar
+   - The app checks if a translation already exists for the detection in the user's language
+   - If no translation exists, it offers a button to generate one
+   - When requested, the app:
+     - Retrieves the detection details and comments
+     - Formats the content as structured HTML
+     - Triggers the `translate-with-charlotte-ai` workflow
+     - Displays the translated content once complete
+
+2. **Context Management**:
+
+   - Users can add custom contextual information to any detection
+   - The system stores this context alongside translations in the `detection_context` collection
+   - Each context entry is linked to a specific detection via its `compositeId`
+
+3. **Detection Context Explorer**:
+   - Provides a centralized interface for managing all detection context entries
+   - Users can create, edit, view, and delete contextual information
+   - All entries are saved to the `detection_context` collection for persistence
+
+This sample demonstrates several powerful Foundry capabilities, including UI extensions that integrate directly into existing Falcon interfaces, workflow integration with Charlotte AI for natural language processing, collections for data persistence, and seamless API integrations with the Falcon platform. Together, these components create a cohesive application that enhances security operations by providing translated detection information and enabling teams to maintain comprehensive documentation of security events.
 
 ## Foundry resources
 
