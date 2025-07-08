@@ -67,7 +67,7 @@ export const detectionHtml = (alert, comments = []) => {
   if (comments.length) {
     html +=
       '<h2>Comments</h2> <ul class="max-w-lg space-y-6">' +
-      comments.map(sanitize(commentHtml)).join("\n") +
+      comments.map(commentHtml).map(sanitize).join("\n") +
       "</ul>";
   }
 
