@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@crowdstrike/foundry-js':
-        specifier: ^0.17.1
-        version: 0.17.1
+        specifier: ^0.18.0
+        version: 0.18.0
       '@crowdstrike/tailwind-toucan-base':
         specifier: ^5.0.0
         version: 5.0.0(autoprefixer@10.4.21(postcss@8.5.6))(postcss@8.5.6)
@@ -722,9 +722,9 @@ packages:
   '@bcoe/v8-coverage@0.2.3':
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
 
-  '@crowdstrike/foundry-js@0.17.1':
-    resolution: {integrity: sha512-HRsQ/ELijdIMWlnDkUBO/P2/Ju8Uf4EcpyCv9eLMAMCIHN5JzaILS/hWG/KkbgCFeOag961Y6+wktCuJ7MqMHA==}
-    engines: {node: '>=18.12.0'}
+  '@crowdstrike/foundry-js@0.18.0':
+    resolution: {integrity: sha512-Nh0iwpNKfl/MOfqRh4lfwbTuKuGLIUOq+lXTXePYIRGP/kq4U6VdW4O9wkLfFeII3dQt2IIuXnmTn9+1epiMgQ==}
+    engines: {node: '>=22'}
 
   '@crowdstrike/tailwind-toucan-base@5.0.0':
     resolution: {integrity: sha512-9a6CFHN62sN1JhU4tU/C6px9W0eVqYhn1UsK0jjm6KxEnMoYwYPppLFDkiTxERPoUsJeEluWH4vbZ96P5UTIOg==}
@@ -1189,7 +1189,7 @@ packages:
     engines: {node: '>=8'}
 
   ansi-regex@5.0.1:
-    resolution: {integrity: sha1-CCyyyJyf6GWaMRpTvWpNxTAdswQ=}
+    resolution: {integrity: sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ==}
     engines: {node: '>=8'}
 
   ansi-regex@6.1.0:
@@ -1358,6 +1358,9 @@ packages:
 
   caniuse-lite@1.0.30001726:
     resolution: {integrity: sha512-VQAUIUzBiZ/UnlM28fSp2CRF3ivUn1BWEvxMcVTNwpw91Py1pGbPIyIKtd+tzct9C3ouceCVdGAXxZOpZAsgdw==}
+
+  caniuse-lite@1.0.30001727:
+    resolution: {integrity: sha512-pB68nIHmbN6L/4C6MH1DokyR3bYqFwjaSs/sWDHGj4CTcFtQUQMuJftVwWkXq7mNWOybD3KhUv3oWHoGxgP14Q==}
 
   chalk@3.0.0:
     resolution: {integrity: sha512-4D3B6Wf41KOYRFdszmDqMCGq5VV/uMAB273JILmO+3jAlh8X4qDtdtgCR3fxtbLEMzSx22QdhnDcJvu2u1fVwg==}
@@ -3141,8 +3144,8 @@ packages:
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
 
-  uuid@9.0.1:
-    resolution: {integrity: sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==}
+  uuid@11.1.0:
+    resolution: {integrity: sha512-0/A9rDy9P7cJ+8w1c9WD9V//9Wj15Ce2MPz8Ri6032usz+NfePxx5AcN3bN+r6ZL6jEo066/yNYB3tn4pQEx+A==}
     hasBin: true
 
   v8-to-istanbul@9.3.0:
@@ -4059,11 +4062,11 @@ snapshots:
 
   '@bcoe/v8-coverage@0.2.3': {}
 
-  '@crowdstrike/foundry-js@0.17.1':
+  '@crowdstrike/foundry-js@0.18.0':
     dependencies:
       emittery: 1.2.0
       typescript-memoize: 1.1.1
-      uuid: 9.0.1
+      uuid: 11.1.0
 
   '@crowdstrike/tailwind-toucan-base@5.0.0(autoprefixer@10.4.21(postcss@8.5.6))(postcss@8.5.6)':
     dependencies:
@@ -4667,7 +4670,7 @@ snapshots:
   autoprefixer@10.4.21(postcss@8.5.6):
     dependencies:
       browserslist: 4.25.1
-      caniuse-lite: 1.0.30001726
+      caniuse-lite: 1.0.30001727
       fraction.js: 4.3.7
       normalize-range: 0.1.2
       picocolors: 1.1.1
@@ -4848,6 +4851,8 @@ snapshots:
       lodash.uniq: 4.5.0
 
   caniuse-lite@1.0.30001726: {}
+
+  caniuse-lite@1.0.30001727: {}
 
   chalk@3.0.0:
     dependencies:
@@ -6806,7 +6811,7 @@ snapshots:
 
   util-deprecate@1.0.2: {}
 
-  uuid@9.0.1: {}
+  uuid@11.1.0: {}
 
   v8-to-istanbul@9.3.0:
     dependencies:
