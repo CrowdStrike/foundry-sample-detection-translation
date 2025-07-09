@@ -10,13 +10,3 @@ Object.defineProperty(navigator, "language", {
     return "en-US";
   },
 });
-
-// Mock for console methods to avoid test noise
-global.console = {
-  ...console,
-  log: jest.fn(),
-  error: jest.fn(),
-};
-
-// Mock for setTimeout
-global.setTimeout = jest.fn((fn) => fn());
