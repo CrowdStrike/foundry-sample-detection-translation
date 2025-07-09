@@ -3539,10 +3539,11 @@ const FalconApiContext = /*#__PURE__*/reactExports.createContext(null);
 function useFalconApiContext() {
   const [isInitialized, setIsInitialized] = reactExports.useState(false);
   const falcon = reactExports.useMemo(() => new FalconApi(), []);
-  const navigation = reactExports.useMemo(() => falcon.isConnected ? falcon.navigation : undefined, [falcon.isConnected]);
+  const [navigation, setNavigation] = reactExports.useState(undefined);
   reactExports.useEffect(() => {
     (async () => {
       await falcon.connect();
+      setNavigation(falcon.navigation);
       setIsInitialized(true);
     })();
   }, []);
@@ -5494,7 +5495,8 @@ function CollectionManagement() {
       return;
     }
     try {
-      const key = `${newEntry.compositeId.replace(/[^\w\-\.]/g)}_${newEntry.type}`;
+      // Fix the regex to properly replace invalid characters with empty string
+      const key = `${newEntry.compositeId.replace(/[^\w\-\.]/g, "")}_${newEntry.type}`;
       await collection.write(key, {
         compositeId: newEntry.compositeId,
         title: newEntry.title,

@@ -5,7 +5,7 @@ const POLL_MAX_ATTEMPTS = 60000 / POLL_MS;
 export const createFalconService = async (onDetectionChanged) => {
   const falcon = new FalconApi();
   falcon.events.on("data", (data) => {
-    onDetectionChanged(data.detectionId);
+    onDetectionChanged(data?.detectionId ?? data?.detection?.composite_id);
   });
   await falcon.connect();
 
@@ -119,7 +119,11 @@ export const createFalconService = async (onDetectionChanged) => {
     getCollectionData,
     getDetectionComments,
     translateHtml,
-    data: falcon.data,
+    data: {
+      ...falcon.data,
+      detectionId:
+        falcon.data?.detectionId ?? falcon.data?.detection?.composite_id,
+    },
   };
 };
 

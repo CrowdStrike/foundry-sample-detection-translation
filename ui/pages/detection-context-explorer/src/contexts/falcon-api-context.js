@@ -1,17 +1,17 @@
-import FalconApi from '@crowdstrike/foundry-js';
-import { createContext, useEffect, useMemo, useState } from 'react';
+import FalconApi from "@crowdstrike/foundry-js";
+import { createContext, useEffect, useMemo, useState } from "react";
 
 const FalconApiContext = createContext(null);
 
 function useFalconApiContext() {
   const [isInitialized, setIsInitialized] = useState(false);
   const falcon = useMemo(() => new FalconApi(), []);
-  const navigation = useMemo(() => falcon.isConnected ? falcon.navigation : undefined, [falcon.isConnected]);
+  const [navigation, setNavigation] = useState(undefined);
 
   useEffect(() => {
     (async () => {
       await falcon.connect();
-
+      setNavigation(falcon.navigation);
       setIsInitialized(true);
     })();
   }, []);
