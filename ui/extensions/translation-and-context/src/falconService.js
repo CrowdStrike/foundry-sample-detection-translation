@@ -1,6 +1,7 @@
 import FalconApi from "@crowdstrike/foundry-js";
 const POLL_MS = 5000;
 const POLL_MAX_ATTEMPTS = 60000 / POLL_MS;
+const WORKFLOW_NAME = "translate-with-charlotte-ai";
 
 export const createFalconService = async (onDetectionChanged) => {
   const falcon = new FalconApi();
@@ -44,30 +45,25 @@ export const createFalconService = async (onDetectionChanged) => {
     });
 
     const activityIds = await Promise.all(
-      cases.map((case_id) => queryActivityByCaseID.get({ case_id }))
+      cases.map((case_id) => queryActivityByCaseID.get({ query: { case_id } }))
     );
 
-    const activities = activityIds.length
-      ? await getCaseActivityByIds.list({ ids: activityIds })
+    const ids = activityIds
+      .filter(Boolean)
+      .filter((id) => typeof id === "string");
+
+    const activities = ids.length
+      ? await getCaseActivityByIds.list({ ids })
       : [];
 
     return activities.filter(({ type }) => type === "comment");
   };
-  const translateHtml = async ({
-    language,
-    htmlContent,
-    compositeId,
-    title,
-    type,
-    objectKey,
-  }) => {
-    console.log({ language, htmlContent, compositeId, title, type, objectKey });
+
+  const translateHtml = async ({ language, htmlContent, collectionEntry }) => {
+    console.log({ language, htmlContent, collectionEntry });
     const triggerResult = await falcon.api.workflows.postEntitiesExecuteV1(
-      { language, htmlContent, compositeId, title, type, objectKey },
-      {
-        name: "translate-with-charlotte-ai",
-        depth: 0,
-      }
+      { language, htmlContent, ...collectionEntry },
+      { name: WORKFLOW_NAME, depth: 0 }
     );
 
     if (triggerResult.errors?.length) {

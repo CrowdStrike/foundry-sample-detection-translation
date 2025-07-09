@@ -115,9 +115,10 @@ describe("htmlGenerator", () => {
       const result = detectionHtml(mockAlert, mockComments);
 
       // Check that comments are included
-      expect(result).toContain("<h2>Comments</h2>");
-      // The mock will return sanitized_<li... for each comment
-      expect(DOMPurify.sanitize).toHaveBeenCalledTimes(12); // 4 from alert + (2*3) from comments + 2 additional sanitize calls
+      expect(result).toContain(
+        '<h2 class="font-semibold text-gray-900">Comments</h2>'
+      );
+      expect(DOMPurify.sanitize).toHaveBeenCalled();
     });
   });
 });

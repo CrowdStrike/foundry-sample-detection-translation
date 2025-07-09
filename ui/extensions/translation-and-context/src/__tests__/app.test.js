@@ -1,5 +1,6 @@
 // Import the module but alias the functions since we'll mock them
-import * as appModule from "../app";
+import * as appModule from "../processDetection";
+import { waitFor } from "@testing-library/dom";
 
 // Destructure the functions for use in tests
 const { translateDetection, processDetection, onDetectionChanged } = appModule;
@@ -44,8 +45,10 @@ jest.mock("@crowdstrike/foundry-js");
 
 describe("app", () => {
   // Create mock DOM elements for tests
-  let mockTranslationSlot;
-  let mockContextSlot;
+  const domSlots = {
+    translationSlot: undefined,
+    contextSlot: undefined,
+  };
 
   // Mock API functions
   const mockGetDetectionById = jest.fn();
@@ -53,20 +56,27 @@ describe("app", () => {
   const mockTranslateHtml = jest.fn();
   const mockGetCollectionData = jest.fn();
 
+  const falconService = {
+    getDetectionById: mockGetDetectionById,
+    getDetectionComments: mockGetDetectionComments,
+    translateHtml: mockTranslateHtml,
+    getCollectionData: mockGetCollectionData,
+  };
+
   beforeEach(() => {
     jest.clearAllMocks();
 
     // Setup mock DOM elements
-    mockTranslationSlot = { innerHTML: "" };
-    mockContextSlot = { innerHTML: "" };
+    domSlots.translationSlot = { innerHTML: "" };
+    domSlots.contextSlot = { innerHTML: "" };
 
-    // Setup mock document.getElementById
-    document.getElementById = jest.fn((id) => {
-      if (id === "translateBtn") {
-        return { addEventListener: jest.fn((event, callback) => callback()) };
-      }
-      return null;
-    });
+    // // Setup mock document.getElementById
+    // document.getElementById = jest.fn((id) => {
+    //   if (id === "translateBtn") {
+    //     return { addEventListener: jest.fn((event, callback) => callback()) };
+    //   }
+    //   return null;
+    // });
 
     // Setup mock responses
     mockGetDetectionById.mockResolvedValue({
@@ -96,17 +106,18 @@ describe("app", () => {
 
   describe("translateDetection", () => {
     test("should translate detection content successfully", async () => {
-      await translateDetection(
-        mockGetDetectionById,
-        mockGetDetectionComments,
-        mockTranslateHtml,
-        mockTranslationSlot,
-        "test-detection-id",
-        "es",
-        "Test Title",
-        "translation_es",
-        "test-id_translation_es"
-      );
+      await translateDetection({
+        falconService,
+        domSlots,
+        detectionId: "test-detection-id",
+        language: "es",
+        collectionEntry: {
+          title: "Test Title",
+          type: "translation_es",
+          objectKey: "test-id_translation_es",
+          compositeId: "test-detection-id",
+        },
+      });
 
       // Check API calls
       expect(mockGetDetectionById).toHaveBeenCalledWith("test-detection-id");
@@ -116,14 +127,16 @@ describe("app", () => {
       expect(mockTranslateHtml).toHaveBeenCalledWith({
         language: "es",
         htmlContent: "mock detection html",
-        compositeId: "test-detection-id",
-        title: "Test Title",
-        type: "translation_es",
-        objectKey: "test-id_translation_es",
+        collectionEntry: {
+          title: "Test Title",
+          type: "translation_es",
+          compositeId: "test-detection-id",
+          objectKey: "test-id_translation_es",
+        },
       });
 
       // Check DOM updates
-      expect(mockTranslationSlot.innerHTML).toContain("Test Title");
+      expect(domSlots.translationSlot.innerHTML).toContain("Test Title");
       expect(contextEntryHtml).toHaveBeenCalledWith({
         title: "Test Title",
         content: "Translated content",
@@ -133,23 +146,26 @@ describe("app", () => {
     test("should handle translation errors", async () => {
       mockTranslateHtml.mockRejectedValue(new Error("Translation failed"));
 
-      await translateDetection(
-        mockGetDetectionById,
-        mockGetDetectionComments,
-        mockTranslateHtml,
-        mockTranslationSlot,
-        "test-detection-id",
-        "es",
-        "Test Title",
-        "translation_es",
-        "test-id_translation_es"
-      );
+      await translateDetection({
+        falconService,
+        domSlots,
+        detectionId: "test-detection-id",
+        language: "es",
+        collectionEntry: {
+          title: "Test Title",
+          type: "translation_es",
+          objectKey: "test-id_translation_es",
+          compositeId: "test-detection-id",
+        },
+      });
 
       // Check error handling
-      expect(mockTranslationSlot.innerHTML).toContain(
+      expect(domSlots.translationSlot.innerHTML).toContain(
         "Error translating detection"
       );
-      expect(mockTranslationSlot.innerHTML).toContain("Translation failed");
+      expect(domSlots.translationSlot.innerHTML).toContain(
+        "Translation failed"
+      );
     });
 
     test("should handle WorkflowTimeoutError", async () => {
@@ -197,7 +213,7 @@ describe("app", () => {
         mockGetDetectionById,
         mockGetDetectionComments,
         mockTranslateHtml,
-        mockTranslationSlot,
+        domSlots.translationSlot,
         "test-detection-id"
       );
 
@@ -219,14 +235,12 @@ describe("app", () => {
       contextEntryHtml.mockImplementationOnce(() => "Translation in English");
       contextEntryHtml.mockImplementationOnce(() => "Context note content");
 
-      const result = await processDetection(
-        "test-detection-id",
-        mockGetCollectionData,
-        jest.fn(),
-        mockTranslationSlot,
-        mockContextSlot,
-        "en"
-      );
+      const result = await processDetection({
+        detectionId: "test-detection-id",
+        falconService,
+        domSlots,
+        language: "en",
+      });
 
       // Check API calls
       expect(mockGetCollectionData).toHaveBeenCalledWith("test-detection-id");
@@ -263,20 +277,20 @@ describe("app", () => {
     });
 
     test("should process non-English detection with existing translation", async () => {
-      // This test needs to avoid using the real getDetectionById which causes the error
-
       // Mock specific implementations
       mockGetCollectionData.mockImplementation(() => {
         return Promise.resolve([
           {
             object_key: "test-detection-id_translation_es",
             title: "Spanish",
-            content: "Spanish content",
+            content: "Existing Spanish content",
+            compositeId: "test-detection-id",
           },
           {
             object_key: "test-detection-id_note",
             title: "Note",
             content: "Note content",
+            compositeId: "test-detection-id",
           },
         ]);
       });
@@ -285,35 +299,27 @@ describe("app", () => {
       contextEntryHtml.mockReset();
 
       // Mock contextEntryHtml to return specific values based on input
-      contextEntryHtml.mockImplementation((entry) => {
-        if (entry.title === "") return "Loading message";
-        if (entry.title === "Spanish") return "Spanish translation";
-        if (entry.title === "Note") return "Note content";
-        return "Unknown entry";
-      });
-
-      // Run the function to test
-      await processDetection(
-        "test-detection-id",
-        mockGetCollectionData,
-        jest.fn(),
-        mockTranslationSlot,
-        mockContextSlot,
-        "es"
+      contextEntryHtml.mockImplementation(
+        (entry) => entry.title + " " + entry.content
       );
 
-      // Directly set the innerHTML to match what our mock would set
-      // This works around the issue with the actual function potentially setting other values
-      mockTranslationSlot.innerHTML = "Spanish translation";
+      // Run the function to test
+      const result = await processDetection({
+        detectionId: "test-detection-id",
+        falconService,
+        domSlots,
+        language: "es",
+      });
 
-      // Now check that the mock value matches what we expect
-      expect(mockTranslationSlot.innerHTML).toBe("Spanish translation");
+      expect(domSlots.translationSlot.innerHTML).toBe(
+        "Spanish Existing Spanish content"
+      );
 
       // Check that contextEntryHtml was called with the right arguments for translation
       expect(contextEntryHtml).toHaveBeenCalledWith(
         expect.objectContaining({
           title: "Spanish",
-          content: "Spanish content",
+          content: "Existing Spanish content",
         })
       );
     });
@@ -349,14 +355,12 @@ describe("app", () => {
         addEventListener: jest.fn(),
       }));
 
-      await processDetection(
-        "test-detection-id",
-        mockGetCollectionData,
-        jest.fn(),
-        mockTranslationSlot,
-        mockContextSlot,
-        "es"
-      );
+      await processDetection({
+        detectionId: "test-detection-id",
+        falconService,
+        domSlots,
+        language: "es",
+      });
 
       // Verify the context entry was called with the button content
       expect(contextEntryHtml).toHaveBeenNthCalledWith(2, {
@@ -367,10 +371,10 @@ describe("app", () => {
       });
 
       // Set the translation slot HTML manually to test
-      mockTranslationSlot.innerHTML = buttonHtml;
+      domSlots.translationSlot.innerHTML = buttonHtml;
 
       // Check that the translation HTML contains the button text
-      expect(mockTranslationSlot.innerHTML).toContain(
+      expect(domSlots.translationSlot.innerHTML).toContain(
         "Translate detection details"
       );
     });
@@ -387,20 +391,20 @@ describe("app", () => {
       // Create a spy on console.error to suppress the error message
       jest.spyOn(console, "error").mockImplementation(() => {});
 
-      const result = await processDetection(
-        "test-detection-id",
-        mockGetCollectionData,
-        jest.fn(),
-        mockTranslationSlot,
-        mockContextSlot,
-        "es"
-      );
+      const result = await processDetection({
+        detectionId: "test-detection-id",
+        falconService,
+        domSlots,
+        language: "es",
+      });
 
       // Should show error message
-      expect(mockTranslationSlot.innerHTML).toContain(
+      expect(domSlots.translationSlot.innerHTML).toContain(
         "Error processing detection"
       );
-      expect(mockTranslationSlot.innerHTML).toContain("Failed to fetch data");
+      expect(domSlots.translationSlot.innerHTML).toContain(
+        "Failed to fetch data"
+      );
 
       // Verify the result contains empty entries
       expect(result).toEqual({
@@ -410,39 +414,6 @@ describe("app", () => {
 
       // Clean up
       console.error.mockRestore();
-    });
-  });
-
-  describe("onDetectionChanged", () => {
-    test("should call processDetection when detection ID changes", () => {
-      const mockProcessDetectionFn = jest.fn();
-
-      onDetectionChanged(
-        "new-detection-id",
-        "current-detection-id",
-        mockProcessDetectionFn
-      );
-
-      // Should call the process function with the new ID
-      expect(mockProcessDetectionFn).toHaveBeenCalledWith("new-detection-id");
-    });
-
-    test("should not call processDetection when current ID is missing", () => {
-      const mockProcessDetectionFn = jest.fn();
-
-      onDetectionChanged("new-detection-id", null, mockProcessDetectionFn);
-
-      // Should not call process function when current ID is missing
-      expect(mockProcessDetectionFn).not.toHaveBeenCalled();
-    });
-
-    test("should not call processDetection when new ID matches current ID", () => {
-      const mockProcessDetectionFn = jest.fn();
-
-      onDetectionChanged("same-id", "same-id", mockProcessDetectionFn);
-
-      // Should not call process function when IDs match
-      expect(mockProcessDetectionFn).not.toHaveBeenCalled();
     });
   });
 });

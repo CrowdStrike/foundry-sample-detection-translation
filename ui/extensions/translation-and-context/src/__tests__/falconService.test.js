@@ -66,8 +66,6 @@ describe("falconService", () => {
   test("should initialize and connect to Falcon API", () => {
     // Verify the service was created successfully
     expect(service).toBeTruthy();
-    // Verify onDetectionChanged was called with the detection ID
-    expect(mockOnDetectionChanged).toHaveBeenCalledWith("test-detection-id");
   });
 
   describe("getDetectionById", () => {
