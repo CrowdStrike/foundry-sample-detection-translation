@@ -40,7 +40,8 @@ import Ze from"@crowdstrike/foundry-js";var ge=5e3,Qe=6e4/ge,Je="translate-with-
   </dl>
 `;return n.length&&(f+=`
     <div class="mt-6">
-      <h2 class="font-semibold text-gray-900">Comments</h2> 
+      <h2 class="font-semibold text-gray-900">Falcon complete</h2> 
+      <h3 class="font-semibold text-gray-900 text-sm">Comments</h3> 
       <ul class="space-y-6">
         ${n.map(Rn).map(F).join(`
 `)}

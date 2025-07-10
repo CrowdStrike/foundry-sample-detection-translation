@@ -67,7 +67,8 @@ export const detectionHtml = (alert, comments = []) => {
   if (comments.length) {
     html += `
     <div class="mt-6">
-      <h2 class="font-semibold text-gray-900">Comments</h2> 
+      <h2 class="font-semibold text-gray-900">Falcon complete</h2> 
+      <h3 class="font-semibold text-gray-900 text-sm">Comments</h3> 
       <ul class="space-y-6">
         ${comments.map(commentHtml).map(sanitize).join("\n")}
       </ul>
