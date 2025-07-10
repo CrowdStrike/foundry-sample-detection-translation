@@ -116,7 +116,7 @@ describe("htmlGenerator", () => {
 
       // Check that comments are included
       expect(result).toContain(
-        '<h2 class="font-semibold text-gray-900">Comments</h2>'
+        '<h3 class="font-semibold text-gray-900 text-sm">Comments</h3>'
       );
       expect(DOMPurify.sanitize).toHaveBeenCalled();
     });
