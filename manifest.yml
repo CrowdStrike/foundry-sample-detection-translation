@@ -1,6 +1,6 @@
 name: Detection translation and context
 description: Provides an extension socket to detections for you to add additional context
-logo: ""
+logo: "app_docs/logo.png"
 vendor: ""
 vendor_products: []
 use_case: Endpoint security
