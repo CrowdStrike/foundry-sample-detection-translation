@@ -45,19 +45,26 @@ export const createFalconService = async (onDetectionChanged) => {
         filter: `case.detections.id:'${detectionId}'`,
       },
     });
+    console.log({ cases });
 
     const activityIds = await Promise.all(
       cases.map((case_id) => queryActivityByCaseID.list({ query: { case_id } }))
     );
+
+    console.log({ activityIds });
 
     const ids = activityIds
       .flat()
       .filter(Boolean)
       .filter((id) => typeof id === "string");
 
+    console.log({ ids });
+
     const activities = ids.length
       ? await getCaseActivityByIds.list({ ids })
       : [];
+
+    console.log({ activities });
 
     return activities.filter(({ type }) => type === "comment");
   };
