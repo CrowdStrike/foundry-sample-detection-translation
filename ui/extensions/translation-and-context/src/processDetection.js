@@ -37,7 +37,12 @@ export async function translateDetection({
   } catch (error) {
     if (error instanceof WorkflowTimeoutError)
       // Sometimes the workflow is not marked as complete but the translation is already stored in the collection
-      return await processDetection(detectionId);
+      return await processDetection({
+        detectionId,
+        domSlots,
+        language,
+        falconService,
+      });
 
     console.error("Error processing detection:", error);
     translationSlot.innerHTML = `
