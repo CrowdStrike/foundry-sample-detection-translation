@@ -58,31 +58,6 @@ git clone https://github.com/CrowdStrike/foundry-sample-detection-translation
 cd foundry-sample-detection-translation
 ```
 
-Update the `servers` section at the end of `api-integrations/Crowdstrike_alerts_and_message-center.json` to point to the Crowdstrike API of your cloud.
-
-from
-
-```
-  "servers": [
-    {
-      "url": "REPLACE_WITH_THE_FALCON_API_OF_YOUR_CLOUD"
-    },
-    { "url": "https://api.crowdstrike.com" },
-    { "url": "https://api.us-2.crowdstrike.com" },
-    { "url": "https://api.eu-1.crowdstrike.com" },
-    { "url": "https://api.us-gov-1.crowdstrike.com" },
-    { "url": "https://api.us-gov-2.crowdstrike.com" }
-  ],
-```
-
-to
-
-```
-  "servers": [
-    { "url": "https://api.crowdstrike.com" }
-  ],
-```
-
 Log in to Foundry:
 
 ```shell
@@ -92,7 +67,7 @@ foundry login
 Select the following permissions:
 
 - [ ] Create and run RTR scripts
-- [ ] Create, execute and test workflow templates
+- [x] Create, execute and test workflow templates
 - [x] Create, run and view API integrations
 - [ ] Create, edit, delete, and list queries
 
@@ -113,7 +88,7 @@ foundry apps release
 
 Next, go to **Foundry** > **App catalog**, find your app, and install it. You will be requested to add the API credentials for the app, you can create them in Support and resources > API clients and keys.
 
-Once it's installed you can find the **Translation and context** extension in the right sidebar of detections:
+Once it's installed you can find the **Translation and custom context** extension in the right sidebar of detections:
 
 - Next-Gen SIEM > Monitor and investigate > Incidents
 - Endpoint security > Monitor > Endpoint detections
