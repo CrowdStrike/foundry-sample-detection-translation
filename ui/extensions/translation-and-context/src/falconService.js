@@ -41,14 +41,17 @@ export const createFalconService = async (onDetectionChanged) => {
     const getCaseActivityByIds = api("GetCaseActivityByIds", { json: true });
 
     const cases = await queryCasesIdsByFilter.list({
-      filter: `case.detections.id:'${detectionId}'`,
+      query: {
+        filter: `case.detections.id:'${detectionId}'`,
+      },
     });
 
     const activityIds = await Promise.all(
-      cases.map((case_id) => queryActivityByCaseID.get({ query: { case_id } }))
+      cases.map((case_id) => queryActivityByCaseID.list({ query: { case_id } }))
     );
 
     const ids = activityIds
+      .flat()
       .filter(Boolean)
       .filter((id) => typeof id === "string");
 
@@ -60,7 +63,6 @@ export const createFalconService = async (onDetectionChanged) => {
   };
 
   const translateHtml = async ({ language, htmlContent, collectionEntry }) => {
-    console.log({ language, htmlContent, collectionEntry });
     const triggerResult = await falcon.api.workflows.postEntitiesExecuteV1(
       { language, htmlContent, ...collectionEntry },
       { name: WORKFLOW_NAME, depth: 0 }
@@ -86,8 +88,6 @@ export const createFalconService = async (onDetectionChanged) => {
       await aMoment();
       ({ errors, resources } = await poll());
     }
-
-    console.log({ resources, errors });
 
     return Object.values(resources?.[0]?.output_data ?? {}).join("\n");
   };
