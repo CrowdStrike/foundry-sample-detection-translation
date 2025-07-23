@@ -7405,7 +7405,7 @@
     {
       "url": "{baseURL}",
       "variables": {
-        "host": {
+        "baseURL": {
           "description": "API baseUrl ({env}.{version}.crowdstrike.com)"
         }
       }
