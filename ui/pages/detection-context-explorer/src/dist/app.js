@@ -5484,22 +5484,13 @@ function CollectionManagement() {
   const fetchEntries = async () => {
     setLoading(true);
     try {
-      console.log(collection, {
-        ...collection
-      });
       const data = await collection.list();
-      console.log({
-        data
-      }, "");
       if (data?.resources?.length) {
         const promises = data.resources.map(objectKey => collection.read(objectKey).then(entry => ({
           ...entry,
           objectKey
         })));
         const fetchedEntries = await Promise.all(promises);
-        console.log({
-          fetchedEntries
-        });
         setEntries(fetchedEntries);
       } else {
         setEntries([]);
@@ -5513,9 +5504,6 @@ function CollectionManagement() {
   };
   const handleDelete = async objectKey => {
     try {
-      console.log({
-        objectKey
-      });
       await collection.delete(objectKey);
       await fetchEntries();
     } catch (err) {

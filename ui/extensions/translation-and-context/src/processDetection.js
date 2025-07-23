@@ -17,10 +17,8 @@ export async function translateDetection({
     });
 
     const alert = await getDetectionById(detectionId);
-    console.log({ alert });
 
     const comments = await getDetectionComments(detectionId);
-    console.log("comments", { comments });
 
     const htmlContent = detectionHtml(alert, comments);
 
@@ -64,8 +62,6 @@ export async function processDetection({
   const { translationSlot, contextSlot } = domSlots;
 
   try {
-    console.log({ detectionId, language });
-
     translationSlot.innerHTML = "";
     contextSlot.innerHTML = contextEntryHtml({
       title: "",
@@ -73,7 +69,6 @@ export async function processDetection({
     });
 
     entries = await getCollectionData(detectionId);
-    console.log("collection entries", entries);
 
     const cleanDetectionId = detectionId.replace(/[^\w\-\.]/g, "");
     const title = `Detection translation (${language})`;
@@ -82,7 +77,6 @@ export async function processDetection({
     const translationEntry = entries.find(
       ({ object_key }) => object_key === objectKey
     );
-    console.log({ translationEntry });
 
     let translationHtml = "";
 
