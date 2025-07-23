@@ -3,7 +3,7 @@ import DomPurify from "dompurify";
 const sanitize = DomPurify.sanitize;
 
 export const contextEntryHtml = ({ title, content }) =>
-  `<div class="my-4 space-y-2 rounded bg-surface-md p-3 shadow-base">
+  `<div class="space-y-2 rounded bg-surface-md p-3 shadow-base">
       <header class="type-md-tight-medium overflow-hidden text-titles-and-attributes">
         ${sanitize(title)}
       </header>
