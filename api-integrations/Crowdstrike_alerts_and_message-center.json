@@ -7403,13 +7403,13 @@
   ],
   "servers": [
     {
-      "url": "REPLACE_WITH_THE_FALCON_API_OF_YOUR_CLOUD"
-    },
-    { "url": "https://api.crowdstrike.com" },
-    { "url": "https://api.us-2.crowdstrike.com" },
-    { "url": "https://api.eu-1.crowdstrike.com" },
-    { "url": "https://api.us-gov-1.crowdstrike.com" },
-    { "url": "https://api.us-gov-2.crowdstrike.com" }
+      "url": "{baseURL}",
+      "variables": {
+        "baseURL": {
+          "description": "API baseUrl ({env}.{version}.crowdstrike.com)"
+        }
+      }
+    }
   ],
   "x-cs-multi-instance": true
 }

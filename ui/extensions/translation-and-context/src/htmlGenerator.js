@@ -33,15 +33,8 @@ export const detectionHtml = (alert, comments = []) => {
   } = alert;
   const { triage_explanation } = automated_triage ?? {};
 
-  let html = `
-  <dl class="space-y-6">  
-    <div class="grid gap-1">
-      <dt class="font-semibold text-gray-900">Description</dt>
-      <dd class="text-gray-600">
-        ${sanitize(description)}
-      </dd>
-    </div>
-
+  const overWatchHtml = overwatch_note
+    ? `
     <div class="grid gap-1">
       <dt class="font-semibold text-gray-900">
         Overwatch notes ${
@@ -54,6 +47,19 @@ export const detectionHtml = (alert, comments = []) => {
         ${sanitize(overwatch_note)}
       </dd>
     </div>
+  `
+    : "";
+
+  let html = `
+  <dl class="space-y-6">  
+    <div class="grid gap-1">
+      <dt class="font-semibold text-gray-900">Description</dt>
+      <dd class="text-gray-600">
+        ${sanitize(description)}
+      </dd>
+    </div>
+
+    ${overWatchHtml}
       
     <div class="grid gap-1">
       <dt class="font-semibold text-gray-900">AI Triage</dt>

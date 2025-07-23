@@ -1,6 +1,6 @@
-name: Detection translation and context
-description: Provides an extension socket to detections for you to add additional context
-logo: ""
+name: Detection Translation and Custom Context
+description: Leverage Charlotte AI to provide translation of detection alerts. This application allows security teams to access AI-powered translations of detection data for improved clarity while adding customized context to any detection for better team communication. The solution streamlines investigation workflows with enriched detection information and maintains comprehensive documentation of security events, enabling more effective security operations and enhanced team collaboration.
+logo: "app_docs/logo.png"
 vendor: ""
 vendor_products: []
 use_case: Endpoint security
@@ -13,7 +13,7 @@ ignored:
 ui:
     homepage: pages.detection-context-explorer
     extensions:
-        - name: Translation and context
+        - name: Translation and custom context
           description: ""
           path: ui/extensions/translation-and-context/dist
           entrypoint: ui/extensions/translation-and-context/dist/index.html
@@ -80,4 +80,6 @@ parsers: []
 logscale:
     saved_searches: []
 lookup_files: []
-docs: {}
+docs:
+    path: app_docs
+    entrypoint: README.md
