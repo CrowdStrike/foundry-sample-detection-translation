@@ -29,7 +29,7 @@ describe("htmlGenerator", () => {
       expect(result).toContain("sanitized_Test Title");
       expect(result).toContain("sanitized_Test Content");
       expect(result).toContain(
-        '<div class="my-4 space-y-2 rounded bg-surface-md p-3 shadow-base">'
+        '<div class="space-y-2 rounded bg-surface-md p-3 shadow-base">'
       );
     });
   });

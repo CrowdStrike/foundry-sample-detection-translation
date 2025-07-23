@@ -23,16 +23,11 @@
     />
   </head>
 
-  <body class="bg-basement">
-    <div id="translationSlot" class="px-4"></div>
-    <div id="contextSlot" class="px-4">
-      <div class="space-y-2 rounded bg-surface-md p-3 shadow-base">
-        <div class="type-md min-h-6 text-titles-and-attributes">
-          Loading detection context...
-        </div>
-      </div>
+  <body>
+    <div class="bg-basement flex flex-col gap-4 p-4">
+      <div id="translationSlot" class="bg-basement flex flex-col gap-4"></div>
+      <div id="contextSlot" class="bg-basement flex flex-col gap-4"></div>
     </div>
-
     <script src="./app.js" type="module"></script>
   </body>
 </html>
