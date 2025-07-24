@@ -5,12 +5,14 @@ export async function translateDetection({
   detectionId,
   language,
   collectionEntry,
-  domSlots: { translationSlot },
-  falconService: { getDetectionById, getDetectionComments, translateHtml },
+  domSlots,
+  falconService,
 }) {
   const { title, type, objectKey } = collectionEntry;
+  const { getDetectionById, getDetectionComments, translateHtml } =
+    falconService;
   try {
-    translationSlot.innerHTML = contextEntryHtml({
+    domSlots.translationSlot.innerHTML = contextEntryHtml({
       title: "Translation in progress...",
       content:
         "Your translation is being processed. This may take a few moments depending on content size",
@@ -28,7 +30,7 @@ export async function translateDetection({
       collectionEntry,
     });
 
-    translationSlot.innerHTML = contextEntryHtml({
+    domSlots.translationSlot.innerHTML = contextEntryHtml({
       title,
       content: translatedContent ?? htmlContent,
     });
@@ -43,7 +45,7 @@ export async function translateDetection({
       });
 
     console.error("Error processing detection:", error);
-    translationSlot.innerHTML = `
+    domSlots.translationSlot.innerHTML = `
       <div class="p-4 bg-red-100 border border-red-400 text-red-700  rounded">
         Error translating detection: ${error.message}
       </div>
