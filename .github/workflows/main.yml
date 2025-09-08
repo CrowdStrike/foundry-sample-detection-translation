@@ -18,24 +18,7 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version: "22"
-          package-manager-cache: false
-
-      - name: Install PNPM
-        uses: pnpm/action-setup@v4
-
-      - name: Get pnpm store directory
-        id: pnpm-cache
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-
-      - name: Setup pnpm cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
+          package-manager-cache: true
 
       - name: Install dependencies for translation-and-context
         working-directory: ui/extensions/translation-and-context
