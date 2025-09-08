@@ -19,6 +19,9 @@ jobs:
         with:
           node-version: "22"
 
+      - name: Install PNPM
+        uses: pnpm/action-setup@v4
+
       - name: Install dependencies for translation-and-context
         working-directory: ui/extensions/translation-and-context
         run: pnpm install
