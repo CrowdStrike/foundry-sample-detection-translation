@@ -1,6 +1,5 @@
 import { WorkflowTimeoutError } from "./falconService";
 import { contextEntryHtml, detectionHtml } from "./htmlGenerator";
-import DOMPurify from "dompurify";
 
 export async function translateDetection({
   detectionId,
@@ -46,11 +45,11 @@ export async function translateDetection({
       });
 
     console.error("Error processing detection:", error);
-    domSlots.translationSlot.innerHTML = `
-      <div class="p-4 bg-red-100 border border-red-400 text-red-700  rounded">
-        Error translating detection: ${DOMPurify.sanitize(error.message)}
-      </div>
-    `;
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'p-4 bg-red-100 border border-red-400 text-red-700 rounded';
+    errorDiv.textContent = `Error translating detection: ${error.message}`;
+    domSlots.translationSlot.innerHTML = '';
+    domSlots.translationSlot.appendChild(errorDiv);
   }
 }
 
@@ -129,11 +128,11 @@ export async function processDetection({
     }
   } catch (error) {
     console.error("Error processing detection:", error);
-    translationSlot.innerHTML = `
-      <div class="p-4 bg-red-100 border border-red-400 text-red-700  rounded">
-        Error processing detection: ${DOMPurify.sanitize(error.message)}
-      </div>
-    `;
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'p-4 bg-red-100 border border-red-400 text-red-700 rounded';
+    errorDiv.textContent = `Error processing detection: ${error.message}`;
+    translationSlot.innerHTML = '';
+    translationSlot.appendChild(errorDiv);
   }
 
   return { entries, language };
