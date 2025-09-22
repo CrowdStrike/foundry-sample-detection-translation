@@ -1,5 +1,6 @@
 import { WorkflowTimeoutError } from "./falconService";
 import { contextEntryHtml, detectionHtml } from "./htmlGenerator";
+import DOMPurify from "dompurify";
 
 export async function translateDetection({
   detectionId,
@@ -47,7 +48,7 @@ export async function translateDetection({
     console.error("Error processing detection:", error);
     domSlots.translationSlot.innerHTML = `
       <div class="p-4 bg-red-100 border border-red-400 text-red-700  rounded">
-        Error translating detection: ${error.message}
+        Error translating detection: ${DOMPurify.sanitize(error.message)}
       </div>
     `;
   }
@@ -130,7 +131,7 @@ export async function processDetection({
     console.error("Error processing detection:", error);
     translationSlot.innerHTML = `
       <div class="p-4 bg-red-100 border border-red-400 text-red-700  rounded">
-        Error processing detection: ${error.message}
+        Error processing detection: ${DOMPurify.sanitize(error.message)}
       </div>
     `;
   }
