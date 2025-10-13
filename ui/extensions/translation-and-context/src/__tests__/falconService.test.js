@@ -1,23 +1,22 @@
 import { WorkflowTimeoutError } from "../falconService";
-import { describe, test, expect, beforeEach, vi } from "vitest";
 
 // Mock the falconService module itself
-vi.mock("../falconService", async () => {
+jest.mock("../falconService", () => {
   // Pull in the actual WorkflowTimeoutError class
-  const actual = await vi.importActual("../falconService");
+  const actual = jest.requireActual("../falconService");
 
   // Create mock functions for all the service methods
-  const mockGetDetectionById = vi
+  const mockGetDetectionById = jest
     .fn()
     .mockResolvedValue({ id: "test-detection-id" });
-  const mockGetCollectionData = vi
+  const mockGetCollectionData = jest
     .fn()
     .mockResolvedValue([{ object_key: "test-key" }]);
-  const mockGetDetectionComments = vi.fn().mockResolvedValue([]);
-  const mockTranslateHtml = vi.fn().mockResolvedValue("translated html");
+  const mockGetDetectionComments = jest.fn().mockResolvedValue([]);
+  const mockTranslateHtml = jest.fn().mockResolvedValue("translated html");
 
   // Create a mock for the createFalconService function
-  const mockCreateFalconService = vi
+  const mockCreateFalconService = jest
     .fn()
     .mockImplementation((onDetectionChanged) => {
       // Call the callback with test data
@@ -55,10 +54,10 @@ import {
 
 describe("falconService", () => {
   let service;
-  const mockOnDetectionChanged = vi.fn();
+  const mockOnDetectionChanged = jest.fn();
 
   beforeEach(async () => {
-    vi.clearAllMocks();
+    jest.clearAllMocks();
 
     // Create the service
     service = await createFalconService(mockOnDetectionChanged);
