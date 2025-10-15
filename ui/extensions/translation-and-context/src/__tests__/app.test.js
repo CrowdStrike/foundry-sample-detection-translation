@@ -1,6 +1,7 @@
 // Import the module but alias the functions since we'll mock them
 import * as appModule from "../processDetection";
 import { waitFor } from "@testing-library/dom";
+import { describe, test, expect, beforeEach, vi } from "vitest";
 
 // Destructure the functions for use in tests
 const { translateDetection, processDetection, onDetectionChanged } = appModule;
@@ -8,23 +9,23 @@ import { contextEntryHtml, detectionHtml } from "../htmlGenerator";
 import { WorkflowTimeoutError } from "../falconService";
 
 // Mock the imported htmlGenerator functions
-jest.mock("../htmlGenerator", () => ({
-  contextEntryHtml: jest.fn(
+vi.mock("../htmlGenerator", () => ({
+  contextEntryHtml: vi.fn(
     (data) => `contextEntryHtml: ${data.title || "no-title"}`
   ),
-  detectionHtml: jest.fn(() => "mock detection html"),
+  detectionHtml: vi.fn(() => "mock detection html"),
 }));
 
 // Mock the imported falconService
-jest.mock("../falconService", () => {
-  const mockCreateFalconService = jest
+vi.mock("../falconService", () => {
+  const mockCreateFalconService = vi
     .fn()
     .mockImplementation((onDetectionChanged) => {
       return {
-        getDetectionById: jest.fn(),
-        getCollectionData: jest.fn(),
-        getDetectionComments: jest.fn(),
-        translateHtml: jest.fn(),
+        getDetectionById: vi.fn(),
+        getCollectionData: vi.fn(),
+        getDetectionComments: vi.fn(),
+        translateHtml: vi.fn(),
         data: {
           detectionId: "test-detection-id",
         },
@@ -32,7 +33,7 @@ jest.mock("../falconService", () => {
     });
 
   return {
-    WorkflowTimeoutError: jest.fn().mockImplementation(function () {
+    WorkflowTimeoutError: vi.fn().mockImplementation(function () {
       this.name = "WorkflowTimeoutError";
       this.message = "Max polling attempts for workflow completion";
     }),
@@ -41,7 +42,7 @@ jest.mock("../falconService", () => {
 });
 
 // Mock the @crowdstrike/foundry-js module
-jest.mock("@crowdstrike/foundry-js");
+vi.mock("@crowdstrike/foundry-js");
 
 describe("app", () => {
   // Create mock DOM elements for tests
@@ -51,10 +52,10 @@ describe("app", () => {
   };
 
   // Mock API functions
-  const mockGetDetectionById = jest.fn();
-  const mockGetDetectionComments = jest.fn();
-  const mockTranslateHtml = jest.fn();
-  const mockGetCollectionData = jest.fn();
+  const mockGetDetectionById = vi.fn();
+  const mockGetDetectionComments = vi.fn();
+  const mockTranslateHtml = vi.fn();
+  const mockGetCollectionData = vi.fn();
 
   const falconService = {
     getDetectionById: mockGetDetectionById,
@@ -64,19 +65,11 @@ describe("app", () => {
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 
     // Setup mock DOM elements
     domSlots.translationSlot = { innerHTML: "" };
     domSlots.contextSlot = { innerHTML: "" };
-
-    // // Setup mock document.getElementById
-    // document.getElementById = jest.fn((id) => {
-    //   if (id === "translateBtn") {
-    //     return { addEventListener: jest.fn((event, callback) => callback()) };
-    //   }
-    //   return null;
-    // });
 
     // Setup mock responses
     mockGetDetectionById.mockResolvedValue({
@@ -170,13 +163,13 @@ describe("app", () => {
 
     test("should handle WorkflowTimeoutError", async () => {
       // We need to mock app.js directly to access its internals
-      jest.mock("../app", () => {
-        const originalModule = jest.requireActual("../app");
+      vi.mock("../app", () => {
+        const originalModule = vi.importActual("../app");
 
         return {
           ...originalModule,
           // Override the processDetection function with a mock
-          processDetection: jest.fn().mockResolvedValue({}),
+          processDetection: vi.fn().mockResolvedValue({}),
         };
       });
 
@@ -189,7 +182,7 @@ describe("app", () => {
       });
 
       // Create a spy on console.error to suppress the error message
-      jest.spyOn(console, "error").mockImplementation(() => {});
+      vi.spyOn(console, "error").mockImplementation(() => {});
 
       // Create a test version of the translateDetection function
       const testTranslateDetection = async (
@@ -223,7 +216,7 @@ describe("app", () => {
       );
 
       // Clean up
-      jest.resetModules();
+      vi.resetModules();
       console.error.mockRestore();
     });
   });
@@ -327,7 +320,7 @@ describe("app", () => {
     test("should process non-English detection with no translation", async () => {
       // Clear all previous mock implementations
       contextEntryHtml.mockReset();
-      jest.clearAllMocks();
+      vi.clearAllMocks();
 
       // Setup the test data - only a note, no translation
       const noteEntry = {
@@ -351,8 +344,8 @@ describe("app", () => {
       contextEntryHtml.mockImplementationOnce(() => "Note content");
 
       // Mock the document.getElementById for the button
-      document.getElementById.mockImplementation(() => ({
-        addEventListener: jest.fn(),
+      document.getElementById = vi.fn(() => ({
+        addEventListener: vi.fn(),
       }));
 
       await processDetection({
@@ -381,7 +374,7 @@ describe("app", () => {
 
     test("should handle errors during processing", async () => {
       // Clear previous mock calls
-      jest.clearAllMocks();
+      vi.clearAllMocks();
 
       // Mock the API error
       mockGetCollectionData.mockRejectedValue(
@@ -389,7 +382,7 @@ describe("app", () => {
       );
 
       // Create a spy on console.error to suppress the error message
-      jest.spyOn(console, "error").mockImplementation(() => {});
+      vi.spyOn(console, "error").mockImplementation(() => {});
 
       const result = await processDetection({
         detectionId: "test-detection-id",
