@@ -1,25 +1,32 @@
 import React from "react";
-import { renderHook, act, render } from "@testing-library/react";
+import { renderHook, render, act } from "@testing-library/react";
+import { vi, describe, test, expect } from "vitest";
 import { useFalconApiContext, FalconApiContext } from "../falcon-api-context";
 
 // Mock the FalconApi from @crowdstrike/foundry-js
-jest.mock("@crowdstrike/foundry-js", () => {
-  return jest.fn().mockImplementation(() => ({
-    connect: jest.fn().mockResolvedValue(),
+vi.mock("@crowdstrike/foundry-js", () => ({
+  default: vi.fn().mockImplementation(() => ({
+    connect: vi.fn().mockResolvedValue(),
     isConnected: false,
-    navigation: { navigate: jest.fn() },
-  }));
-});
+    navigation: { navigate: vi.fn() },
+  })),
+}));
 
 describe("FalconApiContext", () => {
   describe("useFalconApiContext", () => {
-    test("should initialize with default values", () => {
+    test("should initialize with default values", async () => {
       const { result } = renderHook(() => useFalconApiContext());
 
       // Initial state before connection completes
       expect(result.current.isInitialized).toBe(false);
       expect(result.current.falcon).toBeTruthy();
       expect(result.current.navigation).toBeUndefined();
+
+      // Wait for async effects to complete
+      await act(async () => {
+        // Wait for the useEffect to complete
+        await new Promise((resolve) => setTimeout(resolve, 0));
+      });
     });
 
     test("should initialize with falcon API connected", async () => {

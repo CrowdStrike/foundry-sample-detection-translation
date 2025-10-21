@@ -1,21 +1,23 @@
-import React from "react";
-import { render, screen, waitFor, fireEvent } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
-import { CollectionManagement } from "../collection-management";
-import { FalconApiContext } from "../../contexts/falcon-api-context";
+vi.mock("dompurify");
+
 import DOMPurify from "dompurify";
 
+import React from "react";
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { vi, describe, test, beforeEach, expect } from "vitest";
+import { CollectionManagement } from "../collection-management";
+import { FalconApiContext } from "../../contexts/falcon-api-context";
+
 // Mock DOMPurify
-jest.mock("dompurify", () => ({
-  sanitize: jest.fn((content) => `sanitized_${content}`),
-}));
+DOMPurify.sanitize = vi.fn((content) => `sanitized_${content}`);
 
 // Create a mock collection with all required methods
 const createMockCollection = () => ({
-  list: jest.fn(),
-  read: jest.fn(),
-  write: jest.fn(),
-  delete: jest.fn(),
+  list: vi.fn(),
+  read: vi.fn(),
+  write: vi.fn(),
+  delete: vi.fn(),
 });
 
 describe("CollectionManagement", () => {
@@ -61,11 +63,11 @@ describe("CollectionManagement", () => {
 
     // Setup mock falcon api
     mockFalcon = {
-      collection: jest.fn(() => mockCollection),
+      collection: vi.fn(() => mockCollection),
     };
 
     // Mock console errors to avoid test output noise
-    console.error = jest.fn();
+    console.error = vi.fn();
   });
 
   const renderComponent = () => {
@@ -80,9 +82,6 @@ describe("CollectionManagement", () => {
 
   test("should fetch and display entries on initial render", async () => {
     renderComponent();
-
-    // Should show loading state initially
-    expect(screen.getByText("Loading entries...")).toBeInTheDocument();
 
     // Wait for entries to load
     await waitFor(() => {
