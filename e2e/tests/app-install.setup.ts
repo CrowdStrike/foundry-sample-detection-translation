@@ -1,20 +1,17 @@
-import { test as setup } from '@playwright/test';
-import { FoundryHomePage } from '../src/pages/FoundryHomePage';
-import { DetectionContextExplorerPage } from '../src/pages/DetectionContextExplorerPage';
+import { test as setup } from '../src/fixtures';
 
-setup('install Detection Translation app', async ({ page }) => {
-  const foundryHomePage = new FoundryHomePage(page);
-  const detectionContextExplorerPage = new DetectionContextExplorerPage(page);
-
-  await foundryHomePage.goto();
-
-  const isInstalled = await detectionContextExplorerPage.isAppInstalled();
+setup('install Detection Translation app', async ({ appCatalogPage, appName }) => {
+  // Check if app is already installed (this navigates to the app page)
+  const isInstalled = await appCatalogPage.isAppInstalled(appName);
 
   if (!isInstalled) {
-    console.log('App is not installed. Installing...');
-    await detectionContextExplorerPage.installAppFromCatalog();
-    console.log('App installed successfully');
+    console.log(`App '${appName}' is not installed. Installing...`);
+    const installed = await appCatalogPage.installApp(appName);
+
+    if (!installed) {
+      throw new Error(`Failed to install app '${appName}'`);
+    }
   } else {
-    console.log('App is already installed - skipping installation');
+    console.log(`App '${appName}' is already installed`);
   }
 });
