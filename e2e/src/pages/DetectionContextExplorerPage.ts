@@ -240,8 +240,9 @@ export class DetectionContextExplorerPage extends BasePage {
           await expect(successMessage).toBeVisible({ timeout: 30000 });
           this.logger.success('Successfully uninstalled failed app');
 
-          // Wait a moment for UI to update
-          await this.page.waitForTimeout(2000);
+          // Refresh page to see updated status
+          await this.page.reload();
+          await this.page.waitForLoadState('networkidle');
         } else {
           this.logger.warn('No Uninstall option found in menu, attempting direct installation');
         }
@@ -296,9 +297,6 @@ export class DetectionContextExplorerPage extends BasePage {
   private async clickInstallButton(): Promise<void> {
     this.logger.info('Looking for Install app button...');
 
-    // Wait a moment for any UI updates to complete after filling form
-    await this.page.waitForTimeout(1000);
-
     const installButton = this.page.getByRole('button', { name: 'Install app' });
 
     try {
@@ -311,9 +309,6 @@ export class DetectionContextExplorerPage extends BasePage {
 
       // Ensure page is fully loaded before clicking
       await this.page.waitForLoadState('networkidle');
-
-      // Give the page a moment to settle after network idle
-      await this.page.waitForTimeout(500);
 
       this.logger.info('Clicking Install app button');
       await installButton.click();
@@ -560,15 +555,9 @@ export class DetectionContextExplorerPage extends BasePage {
     await expect(menuButton).toBeVisible({ timeout: 10000 });
     await menuButton.click();
 
-    // Wait for menu to expand
-    await this.page.waitForTimeout(1000);
-
     const customAppsButton = this.page.getByRole('button', { name: 'Custom apps' });
     await expect(customAppsButton).toBeVisible({ timeout: 10000 });
     await customAppsButton.click();
-
-    // Wait for submenu to expand
-    await this.page.waitForTimeout(500);
 
     const appName = process.env.APP_NAME || 'foundry-sample-detection-translation';
     let appButton = this.page.getByRole('button', { name: appName, exact: true });
@@ -584,7 +573,9 @@ export class DetectionContextExplorerPage extends BasePage {
     const isExpanded = await appButton.getAttribute('aria-expanded');
     if (isExpanded !== 'true') {
       await appButton.click();
-      await this.page.waitForTimeout(500);
+      // Wait for the submenu to expand by checking for the link to become visible
+      const pageLink = this.page.getByRole('link', { name: /Detection.*[Ee]xplorer/i }).first();
+      await expect(pageLink).toBeVisible({ timeout: 5000 });
     }
 
     const pageLink = this.page.getByRole('link', { name: /Detection.*[Ee]xplorer/i }).first();
@@ -594,85 +585,4 @@ export class DetectionContextExplorerPage extends BasePage {
     this.logger.success('Successfully navigated via Custom apps menu');
   }
 
-  /**
-   * Uninstall the Detection Translation app
-   */
-  async uninstallApp(): Promise<void> {
-    return this.withTiming(
-      async () => {
-        const appName = process.env.APP_NAME || 'foundry-sample-detection-translation';
-
-        try {
-          await this.navigateToPath('/foundry/app-catalog', 'App catalog page');
-
-          const searchBox = this.page.getByRole('searchbox', { name: 'Search' });
-          await searchBox.fill(appName);
-          await this.page.keyboard.press('Enter');
-          await this.page.waitForLoadState('networkidle');
-
-          const appLink = this.page.getByRole('link', { name: appName, exact: true });
-
-          // Wait for the app link to appear in search results
-          try {
-            await appLink.waitFor({ state: 'visible', timeout: 10000 });
-            this.logger.debug(`Found app "${appName}" in search results`);
-          } catch (error) {
-            this.logger.info(`App "${appName}" not found in catalog - may already be uninstalled`);
-            return;
-          }
-
-          await appLink.click();
-          await this.page.waitForURL(/\/foundry\/app-catalog\/[^\/]+$/, { timeout: 10000 });
-          await this.page.waitForLoadState('networkidle');
-
-          this.logger.debug('Navigated to app detail page');
-
-          // Check if app is actually installed by looking for "Install now" link
-          // If "Install now" link exists, app is NOT installed
-          const installLink = this.page.getByRole('link', { name: 'Install now' });
-          const hasInstallLink = await installLink.isVisible({ timeout: 3000 }).catch(() => false);
-
-          if (hasInstallLink) {
-            this.logger.info(`App "${appName}" is already uninstalled`);
-            return;
-          }
-
-          // On the app detail page, find the "Open menu" button that's near the "Open app" button
-          // This is in the app header area, not the page navigation
-          // Use a more specific selector that excludes navigation menus
-          const openAppButton = this.page.getByRole('button', { name: 'Open app' });
-          const appHeaderArea = this.page.locator('div').filter({ has: openAppButton });
-          const openMenuButton = appHeaderArea.getByRole('button', { name: 'Open menu' });
-
-          await expect(openMenuButton).toBeVisible({ timeout: 5000 });
-
-          this.logger.debug('Clicking Open menu button');
-          await openMenuButton.click();
-
-          // Wait a moment for menu to open
-          await this.page.waitForTimeout(500);
-
-          const uninstallMenuItem = this.page.getByRole('menuitem', { name: 'Uninstall app' });
-          await expect(uninstallMenuItem).toBeVisible({ timeout: 5000 });
-
-          this.logger.debug('Clicking Uninstall app menuitem');
-          await uninstallMenuItem.click();
-
-          const uninstallButton = this.page.getByRole('button', { name: 'Uninstall' });
-          await expect(uninstallButton).toBeVisible({ timeout: 5000 });
-          await uninstallButton.click();
-
-          const successMessage = this.page.getByText(/has been uninstalled/i);
-          await expect(successMessage).toBeVisible({ timeout: 30000 });
-
-          this.logger.success(`Successfully uninstalled app "${appName}"`);
-
-        } catch (error) {
-          this.logger.warn(`Failed to uninstall app "${appName}": ${error.message}`);
-          throw error;
-        }
-      },
-      'Uninstall Detection Translation app'
-    );
-  }
 }

@@ -1,5 +1,4 @@
-app_id: b22c2df0088642be9404a9d27d139368
-name: foundry-sample-detection-translation
+name: Detection Translation and Custom Context
 description: Leverage Charlotte AI to provide translation of detection alerts. This application allows security teams to access AI-powered translations of detection data for improved clarity while adding customized context to any detection for better team communication. The solution streamlines investigation workflows with enriched detection information and maintains comprehensive documentation of security events, enabling more effective security operations and enhanced team collaboration.
 logo: app_docs/logo.png
 vendor: ""
@@ -16,8 +15,7 @@ ignored:
 ui:
     homepage: pages.detection-context-explorer
     extensions:
-        - id: 36b256c5a705437b948d8f933bb7235b
-          name: Translation and custom context
+        - name: Translation and custom context
           description: ""
           path: ui/extensions/translation-and-context/dist
           entrypoint: ui/extensions/translation-and-context/dist/index.html
@@ -38,7 +36,6 @@ ui:
           is_ui_builder: false
     pages:
         detection-context-explorer:
-            id: 633be55e806a4f15be61e47089d7a046
             name: Detection context explorer
             description: A centralized interface for viewing, editing, deleting, and creating detection context entries to enhance threat intelligence and investigation capabilities.
             path: ui/pages/detection-context-explorer/src/dist
@@ -55,15 +52,13 @@ ui:
             permissions: []
     dashboards: {}
     navigation:
-        id: e96466763ca949d8afd2b6efadb68d8a
         links:
             - path: /
               name: Detection context explorer
               permissions: []
               ref: pages.detection-context-explorer
 api_integrations:
-    - id: ef52d1dc95cb482aac524f002eb26a6f
-      name: Crowdstrike alerts and message-center
+    - name: Crowdstrike alerts and message-center
       description: ""
       path: api-integrations/Crowdstrike_alerts_and_message-center.json
 rtr_scripts: []
@@ -81,8 +76,7 @@ auth:
     roles: []
 functions: []
 workflows:
-    - id: df1cd748778144fc9149bc33716ce864
-      name: translate-with-charlotte-ai
+    - name: translate-with-charlotte-ai
       path: workflows/translate-with-charlotte-ai.yml
       permissions: []
 parsers: []
@@ -90,6 +84,5 @@ logscale:
     saved_searches: []
 lookup_files: []
 docs:
-    id: 214e14c922294e74998c7b7ce99062f1
     path: app_docs
     entrypoint: README.md

@@ -1,9 +1,7 @@
-import { test as teardown } from '@playwright/test';
-import { DetectionContextExplorerPage } from '../src/pages/DetectionContextExplorerPage';
+import { test as teardown } from '../src/fixtures';
 
-teardown('uninstall Detection Translation app', async ({ page }) => {
-  const detectionContextExplorerPage = new DetectionContextExplorerPage(page);
-
+teardown('uninstall Detection Translation app', async ({ appCatalogPage, appName }) => {
   // Clean up by uninstalling the app after all tests complete
-  await detectionContextExplorerPage.uninstallApp();
+  await appCatalogPage.navigateToPath('/foundry/app-catalog', 'App Catalog');
+  await appCatalogPage.uninstallApp(appName);
 });
