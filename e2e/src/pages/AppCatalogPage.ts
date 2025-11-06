@@ -147,39 +147,93 @@ export class AppCatalogPage extends BasePage {
     try {
       await textInputs.first().waitFor({ state: 'visible', timeout: 15000 });
       const count = await textInputs.count();
-      this.logger.info(`ServiceNow configuration form detected with ${count} input fields`);
+      this.logger.info(`API integration configuration form detected with ${count} input fields`);
     } catch (error) {
-      this.logger.info('No ServiceNow configuration required - no input fields found');
+      this.logger.info('No API integration configuration required - no input fields found');
       return;
     }
 
-    this.logger.info('ServiceNow configuration required, filling dummy values');
+    this.logger.info('API integration configuration required, filling Falcon API values');
+
+    // Calculate API base URL from Falcon base URL
+    const falconBaseUrl = process.env.FALCON_BASE_URL || 'https://falcon.us-2.crowdstrike.com';
+    const apiBaseUrl = falconBaseUrl.replace('falcon', 'api');
+
+    const clientId = process.env.FALCON_CLIENT_ID || '';
+    const clientSecret = process.env.FALCON_CLIENT_SECRET || '';
 
     // Fill configuration fields using index-based selection
     // Field 1: Name
     const nameField = this.page.locator('input[type="text"]').first();
-    await nameField.fill('ServiceNow Test Instance');
+    await nameField.fill('Falcon API');
     this.logger.debug('Filled Name field');
 
-    // Field 2: Instance (the {instance} part of {instance}.service-now.com)
-    const instanceField = this.page.locator('input[type="text"]').nth(1);
-    await instanceField.fill('dev12345');
-    this.logger.debug('Filled Instance field');
+    // Field 2: BaseURL
+    const baseUrlField = this.page.locator('input[type="text"]').nth(1);
+    await baseUrlField.fill(apiBaseUrl);
+    this.logger.debug(`Filled BaseURL field: ${apiBaseUrl}`);
 
-    // Field 3: Username
-    const usernameField = this.page.locator('input[type="text"]').nth(2);
-    await usernameField.fill('dummy_user');
-    this.logger.debug('Filled Username field');
+    // Field 3: Client ID
+    const clientIdField = this.page.locator('input[type="text"]').nth(2);
+    await clientIdField.fill(clientId);
+    this.logger.debug('Filled Client ID field');
 
-    // Field 4: Password (must be >8 characters)
-    const passwordField = this.page.locator('input[type="password"]').first();
-    await passwordField.fill('DummyPassword123');
-    this.logger.debug('Filled Password field');
+    // Field 4: Client secret (password field)
+    const clientSecretField = this.page.locator('input[type="password"]').first();
+    await clientSecretField.fill(clientSecret);
+    this.logger.debug('Filled Client secret field');
+
+    // Field 5: Permissions (combobox - select alerts:read and message-center:read)
+    const permissionsCombobox = this.page.getByRole('combobox', { name: /Permissions/i });
+    if (await this.elementExists(permissionsCombobox, 2000)) {
+      // Check if permissions are already selected (from a previous failed install)
+      const selectedText = await permissionsCombobox.inputValue().catch(() => '');
+      const hasAlertsRead = selectedText.includes('alerts:read');
+      const hasMessageCenterRead = selectedText.includes('message-center:read');
+
+      if (hasAlertsRead && hasMessageCenterRead) {
+        this.logger.debug('Permissions already selected (alerts:read, message-center:read)');
+      } else {
+        // Need to select permissions
+        await permissionsCombobox.click();
+        await this.waiter.delay(500);
+        this.logger.debug('Opened Permissions combobox');
+
+        // Wait for listbox to appear
+        const listbox = this.page.getByRole('listbox');
+        await listbox.waitFor({ state: 'visible', timeout: 5000 });
+
+        if (!hasAlertsRead) {
+          // Select alerts:read - wait for it and click
+          const alertsReadOption = this.page.getByRole('option').filter({ hasText: 'alerts:read' });
+          if (await this.elementExists(alertsReadOption, 2000)) {
+            await alertsReadOption.click();
+            await this.waiter.delay(300);
+            this.logger.debug('Selected alerts:read permission');
+          }
+        }
+
+        if (!hasMessageCenterRead) {
+          // Select message-center:read - wait for it and click
+          const messageCenterReadOption = this.page.getByRole('option').filter({ hasText: 'message-center:read' });
+          if (await this.elementExists(messageCenterReadOption, 2000)) {
+            await messageCenterReadOption.click();
+            await this.waiter.delay(300);
+            this.logger.debug('Selected message-center:read permission');
+          }
+        }
+
+        // Click outside to close the dropdown
+        await this.page.keyboard.press('Escape');
+        await this.waiter.delay(500);
+        this.logger.debug('Closed Permissions combobox');
+      }
+    }
 
     // Wait for network to settle after filling form
     await this.page.waitForLoadState('networkidle');
 
-    this.logger.success('ServiceNow API configuration completed');
+    this.logger.success('Falcon API configuration completed');
   }
 
   /**
@@ -252,7 +306,9 @@ export class AppCatalogPage extends BasePage {
     // Navigate directly to app catalog with search query
     const baseUrl = new URL(this.page.url()).origin;
     await this.page.goto(`${baseUrl}/foundry/app-catalog?q=${appName}`);
-    await this.page.waitForLoadState('networkidle');
+    await this.page.waitForLoadState('networkidle', { timeout: 30000 }).catch(() => {
+      this.logger.debug('Network idle timeout - continuing anyway');
+    });
 
     // Poll for status every 5 seconds (up to 60 seconds)
     const statusText = this.page.locator('[data-test-selector="status-text"]').filter({ hasText: /installed/i });
