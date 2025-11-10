@@ -551,7 +551,7 @@ export class DetectionContextExplorerPage extends BasePage {
     await this.page.waitForLoadState('networkidle');
     this.logger.debug('Refreshed page to update Custom Apps menu');
 
-    const menuButton = this.page.getByRole('button', { name: 'Menu' });
+    const menuButton = this.page.getByTestId('nav-trigger');
     await expect(menuButton).toBeVisible({ timeout: 10000 });
     await menuButton.click();
 
