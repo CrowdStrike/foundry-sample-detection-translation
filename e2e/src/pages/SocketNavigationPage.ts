@@ -172,13 +172,13 @@ export class SocketNavigationPage extends BasePage {
   async verifyExtensionInSocket(extensionName: string): Promise<void> {
     return this.withTiming(
       async () => {
-        // Scroll to bottom to reveal extension (extensions appear at bottom of panel)
-        await this.page.keyboard.press('End');
-        await this.page.keyboard.press('End');
-        await this.waiter.delay(1000);
-
         // Look for extension as a heading (not a tab)
         const extension = this.page.locator('h1, h2, h3, h4, [role="heading"]').filter({ hasText: new RegExp(extensionName, 'i') });
+
+        // Scroll the extension into view if needed
+        await extension.scrollIntoViewIfNeeded({ timeout: 10000 });
+
+        // Wait for extension to be visible
         await expect(extension).toBeVisible({ timeout: 10000 });
       },
       `Verify extension "${extensionName}" in socket`
