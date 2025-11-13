@@ -1,6 +1,6 @@
 name: Detection Translation and Custom Context
 description: Leverage Charlotte AI to provide translation of detection alerts. This application allows security teams to access AI-powered translations of detection data for improved clarity while adding customized context to any detection for better team communication. The solution streamlines investigation workflows with enriched detection information and maintains comprehensive documentation of security events, enabling more effective security operations and enhanced team collaboration.
-logo: "app_docs/logo.png"
+logo: app_docs/logo.png
 vendor: ""
 vendor_products: []
 use_case: Endpoint security
@@ -10,6 +10,8 @@ ignored:
     - .+/node_modules/.+
     - .+/venv$
     - .+/venv/.+
+    - e2e
+    - e2e/.+
 ui:
     homepage: pages.detection-context-explorer
     extensions:
@@ -76,6 +78,7 @@ functions: []
 workflows:
     - name: translate-with-charlotte-ai
       path: workflows/translate-with-charlotte-ai.yml
+      permissions: []
 parsers: []
 logscale:
     saved_searches: []
