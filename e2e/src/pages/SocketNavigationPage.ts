@@ -38,16 +38,19 @@ export class SocketNavigationPage extends BasePage {
 
         // Open the hamburger menu
         const menuButton = this.page.getByTestId('nav-trigger');
+        await menuButton.waitFor({ state: 'visible', timeout: 30000 });
         await menuButton.click();
         await this.page.waitForLoadState('networkidle');
 
         // Click "Endpoint security"
-        const endpointSecurityButton = this.page.getByRole('button', { name: /Endpoint security/i });
+        const navigation = this.page.getByRole('navigation');
+        const endpointSecurityButton = navigation.getByRole('button', { name: /Endpoint security/ });
         await endpointSecurityButton.click();
         await this.waiter.delay(500);
 
         // Click "Monitor" to expand submenu (if not already expanded)
         const monitorButton = this.page.getByRole('button', { name: /^Monitor$/i });
+        await monitorButton.waitFor({ state: 'visible', timeout: 10000 }); // Wait for menu to stabilize
         const isExpanded = await monitorButton.getAttribute('aria-expanded');
         if (isExpanded !== 'true') {
           await monitorButton.click();
@@ -90,16 +93,18 @@ export class SocketNavigationPage extends BasePage {
 
         // Open the hamburger menu
         const menuButton = this.page.getByTestId('nav-trigger');
+        await menuButton.waitFor({ state: 'visible', timeout: 30000 });
         await menuButton.click();
         await this.page.waitForLoadState('networkidle');
 
         // Click "Next-Gen SIEM" in the menu (not the home page card)
         const ngsiemButton = this.page.getByTestId('popout-button').filter({ hasText: /Next-Gen SIEM/i });
         await ngsiemButton.click();
-        await this.waiter.delay(500);
+        await this.page.waitForLoadState('networkidle');
 
-        // Click "Incidents" - use section-link selector to avoid the learn card
+        // Click "Incidents" - use test selector with explicit wait for menu to stabilize
         const incidentsLink = this.page.getByTestId('section-link').filter({ hasText: /Incidents/i });
+        await incidentsLink.waitFor({ state: 'visible', timeout: 10000 });
         await incidentsLink.click();
 
         await this.page.waitForLoadState('networkidle');
@@ -128,16 +133,18 @@ export class SocketNavigationPage extends BasePage {
 
         // Open the hamburger menu
         const menuButton = this.page.getByTestId('nav-trigger');
+        await menuButton.waitFor({ state: 'visible', timeout: 30000 });
         await menuButton.click();
         await this.page.waitForLoadState('networkidle');
 
         // Click "Next-Gen SIEM" in the menu (not the home page card)
         const ngsiemButton = this.page.getByTestId('popout-button').filter({ hasText: /Next-Gen SIEM/i });
         await ngsiemButton.click();
-        await this.waiter.delay(500);
+        await this.page.waitForLoadState('networkidle');
 
-        // Click "Incidents" - use section-link selector to avoid the learn card
+        // Click "Incidents" - use test selector with explicit wait for menu to stabilize
         const incidentsLink = this.page.getByTestId('section-link').filter({ hasText: /Incidents/i });
+        await incidentsLink.waitFor({ state: 'visible', timeout: 10000 });
         await incidentsLink.click();
 
         await this.page.waitForLoadState('networkidle');
