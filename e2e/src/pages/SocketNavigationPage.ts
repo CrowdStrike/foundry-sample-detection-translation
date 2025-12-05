@@ -1,5 +1,6 @@
 import { Page, expect } from '@playwright/test';
 import { BasePage } from './BasePage';
+import { config } from '../config/TestConfig';
 
 /**
  * Utility page object for navigating to detection pages with socket extensions
@@ -38,16 +39,19 @@ export class SocketNavigationPage extends BasePage {
 
         // Open the hamburger menu
         const menuButton = this.page.getByTestId('nav-trigger');
+        await menuButton.waitFor({ state: 'visible', timeout: 30000 });
         await menuButton.click();
         await this.page.waitForLoadState('networkidle');
 
         // Click "Endpoint security"
-        const endpointSecurityButton = this.page.getByRole('button', { name: /Endpoint security/i });
+        const navigation = this.page.getByRole('navigation');
+        const endpointSecurityButton = navigation.getByRole('button', { name: /Endpoint security/ });
         await endpointSecurityButton.click();
         await this.waiter.delay(500);
 
         // Click "Monitor" to expand submenu (if not already expanded)
         const monitorButton = this.page.getByRole('button', { name: /^Monitor$/i });
+        await monitorButton.waitFor({ state: 'visible', timeout: 10000 }); // Wait for menu to stabilize
         const isExpanded = await monitorButton.getAttribute('aria-expanded');
         if (isExpanded !== 'true') {
           await monitorButton.click();
@@ -90,16 +94,18 @@ export class SocketNavigationPage extends BasePage {
 
         // Open the hamburger menu
         const menuButton = this.page.getByTestId('nav-trigger');
+        await menuButton.waitFor({ state: 'visible', timeout: 30000 });
         await menuButton.click();
         await this.page.waitForLoadState('networkidle');
 
         // Click "Next-Gen SIEM" in the menu (not the home page card)
         const ngsiemButton = this.page.getByTestId('popout-button').filter({ hasText: /Next-Gen SIEM/i });
         await ngsiemButton.click();
-        await this.waiter.delay(500);
+        await this.page.waitForLoadState('networkidle');
 
-        // Click "Incidents" - use section-link selector to avoid the learn card
+        // Click "Incidents" - use test selector with explicit wait for menu to stabilize
         const incidentsLink = this.page.getByTestId('section-link').filter({ hasText: /Incidents/i });
+        await incidentsLink.waitFor({ state: 'visible', timeout: 10000 });
         await incidentsLink.click();
 
         await this.page.waitForLoadState('networkidle');
@@ -128,16 +134,18 @@ export class SocketNavigationPage extends BasePage {
 
         // Open the hamburger menu
         const menuButton = this.page.getByTestId('nav-trigger');
+        await menuButton.waitFor({ state: 'visible', timeout: 30000 });
         await menuButton.click();
         await this.page.waitForLoadState('networkidle');
 
         // Click "Next-Gen SIEM" in the menu (not the home page card)
         const ngsiemButton = this.page.getByTestId('popout-button').filter({ hasText: /Next-Gen SIEM/i });
         await ngsiemButton.click();
-        await this.waiter.delay(500);
+        await this.page.waitForLoadState('networkidle');
 
-        // Click "Incidents" - use section-link selector to avoid the learn card
+        // Click "Incidents" - use test selector with explicit wait for menu to stabilize
         const incidentsLink = this.page.getByTestId('section-link').filter({ hasText: /Incidents/i });
+        await incidentsLink.waitFor({ state: 'visible', timeout: 10000 });
         await incidentsLink.click();
 
         await this.page.waitForLoadState('networkidle');
@@ -162,7 +170,11 @@ export class SocketNavigationPage extends BasePage {
         await firstDetectionButton.waitFor({ state: 'visible', timeout: 10000 });
         await firstDetectionButton.click();
 
-        // Wait for detection details to load
+        // Wait for detection details to load and socket extensions to initialize
+        await this.page.waitForLoadState('networkidle');
+
+        // Additional wait for socket extensions to load - they take time after detection opens
+        await this.waiter.delay(2000);
         await this.page.waitForLoadState('networkidle');
       },
       'Open first detection'
@@ -175,11 +187,14 @@ export class SocketNavigationPage extends BasePage {
         // Look for extension as a heading (not a tab)
         const extension = this.page.locator('h1, h2, h3, h4, [role="heading"]').filter({ hasText: new RegExp(extensionName, 'i') });
 
+        // Use navigation timeout for socket extensions as they take time to load after detection opens
+        const timeout = config.navigationTimeout;
+
         // Scroll the extension into view if needed
-        await extension.scrollIntoViewIfNeeded({ timeout: 10000 });
+        await extension.scrollIntoViewIfNeeded({ timeout });
 
         // Wait for extension to be visible
-        await expect(extension).toBeVisible({ timeout: 10000 });
+        await expect(extension).toBeVisible({ timeout });
       },
       `Verify extension "${extensionName}" in socket`
     );
