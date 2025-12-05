@@ -9,8 +9,8 @@
     "@crowdstrike/foundry-js": "0.19.0",
     "@crowdstrike/tailwind-toucan-base": "5.0.0",
     "dompurify": "3.2.6",
-    "react": "19.1.1",
-    "react-dom": "19.1.1"
+    "react": "19.2.1",
+    "react-dom": "19.2.1"
   },
   "devDependencies": {
     "@babel/core": "7.28.3",
