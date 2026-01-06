@@ -9,18 +9,11 @@
       }
     </style>
 
-    <script type="importmap">
-      {
-        "imports": {
-          "@crowdstrike/foundry-js": "https://assets.foundry.crowdstrike.com/foundry-js@0.17.1/index.js"
-        }
-      }
-    </script>
-
     <link
       rel="stylesheet"
       href="https://assets.foundry.crowdstrike.com/tailwind-toucan-base@5.0.0/toucan.css"
     />
+    <script type="module" crossorigin src="./app.js"></script>
   </head>
 
   <body>
@@ -28,6 +21,5 @@
       <div id="translationSlot" class="bg-basement flex flex-col gap-4"></div>
       <div id="contextSlot" class="bg-basement flex flex-col gap-4"></div>
     </div>
-    <script src="./app.js" type="module"></script>
   </body>
 </html>

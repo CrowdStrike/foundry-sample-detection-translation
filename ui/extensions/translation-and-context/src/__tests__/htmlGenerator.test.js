@@ -1,15 +1,18 @@
 import { contextEntryHtml, commentHtml, detectionHtml } from "../htmlGenerator";
 import DOMPurify from "dompurify";
+import { describe, test, expect, beforeEach, vi } from "vitest";
 
 // Mock DOMPurify to isolate our tests from the actual implementation
-jest.mock("dompurify", () => ({
-  sanitize: jest.fn((content) => `sanitized_${content}`),
+vi.mock("dompurify", () => ({
+  default: {
+    sanitize: vi.fn((content) => `sanitized_${content}`),
+  },
 }));
 
 describe("htmlGenerator", () => {
   beforeEach(() => {
     // Clear mock calls before each test
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe("contextEntryHtml", () => {
