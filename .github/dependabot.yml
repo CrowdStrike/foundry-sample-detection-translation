@@ -11,4 +11,4 @@ updates:
       - dependency-name: "actions/setup-node"
         versions: [">=6.2.0"]
       - dependency-name: "actions/cache"
-        versions: [">=5.0.2"]
+        versions: [">=5.0.0"]
