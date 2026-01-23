@@ -14,7 +14,7 @@
   "license": "MIT",
   "description": "",
   "dependencies": {
-    "dompurify": "3.2.6",
+    "dompurify": "3.3.1",
     "esbuild": "0.25.9"
   },
   "devDependencies": {
