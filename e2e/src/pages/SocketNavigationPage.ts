@@ -80,6 +80,7 @@ export class SocketNavigationPage extends BasePage {
    *
    * Note: Despite the socket name "xdr.detections.panel", this socket actually appears
    * on the Incidents page at /xdr/incidents (same as ngsiem.workbench.details).
+   * The extension requires navigating to the Workbench view and clicking on a graph node.
    *
    * Uses menu navigation: Menu → Next-Gen SIEM → Incidents
    */
@@ -116,6 +117,47 @@ export class SocketNavigationPage extends BasePage {
         this.logger.success('Navigated to XDR Detections page (Incidents)');
       },
       'Navigate to XDR Detections'
+    );
+  }
+
+  /**
+   * Navigate to XDR Detections extension via Workbench
+   * The xdr.detections.panel socket requires selecting a graph node in the Workbench
+   */
+  async navigateToXDRDetectionsExtension(): Promise<void> {
+    return this.withTiming(
+      async () => {
+        this.logger.info('Navigating to XDR extension in Workbench');
+
+        // Navigate to XDR detections page (Incidents)
+        await this.navigateToXDRDetections();
+
+        // Wait for incidents to load
+        await this.page.waitForLoadState('networkidle');
+
+        // Click on first incident to open details panel
+        const firstIncidentButton = this.page.locator('[role="gridcell"] button').first();
+        await firstIncidentButton.waitFor({ state: 'visible', timeout: 10000 });
+        await firstIncidentButton.click();
+
+        // Wait for incident details to load
+        await this.page.waitForLoadState('networkidle');
+
+        // Navigate to full incident (Workbench view)
+        const seeFullIncidentLink = this.page.getByRole('link', { name: 'See full incident' });
+        await seeFullIncidentLink.waitFor({ state: 'visible', timeout: 10000 });
+        await seeFullIncidentLink.click();
+        this.logger.debug('Clicked See full incident link');
+
+        // Wait for workbench to load
+        await this.page.waitForLoadState('networkidle');
+
+        // Use graph search to select a node (extension only appears when a node is selected)
+        await this.clickGraphNode();
+
+        this.logger.success('Navigated to XDR Workbench with extension visible');
+      },
+      'Navigate to XDR Detections Extension'
     );
   }
 
@@ -159,6 +201,90 @@ export class SocketNavigationPage extends BasePage {
     );
   }
 
+  /**
+   * Navigate to NGSIEM Incidents extension via Workbench
+   * The ngsiem.workbench.details socket requires selecting a graph node in the Workbench
+   */
+  async navigateToNGSIEMIncidentsExtension(): Promise<void> {
+    return this.withTiming(
+      async () => {
+        this.logger.info('Navigating to NGSIEM extension in Workbench');
+
+        // Navigate to NGSIEM incidents page
+        await this.navigateToNGSIEMIncidents();
+
+        // Wait for incidents to load
+        await this.page.waitForLoadState('networkidle');
+
+        // Click on first incident to open details panel
+        const firstIncidentButton = this.page.locator('[role="gridcell"] button').first();
+        await firstIncidentButton.waitFor({ state: 'visible', timeout: 10000 });
+        await firstIncidentButton.click();
+
+        // Wait for incident details to load
+        await this.page.waitForLoadState('networkidle');
+
+        // Navigate to full incident (Workbench view)
+        const seeFullIncidentLink = this.page.getByRole('link', { name: 'See full incident' });
+        await seeFullIncidentLink.waitFor({ state: 'visible', timeout: 10000 });
+        await seeFullIncidentLink.click();
+        this.logger.debug('Clicked See full incident link');
+
+        // Wait for workbench to load
+        await this.page.waitForLoadState('networkidle');
+
+        // Use graph search to select a node (extension only appears when a node is selected)
+        await this.clickGraphNode();
+
+        this.logger.success('Navigated to NGSIEM Workbench with extension visible');
+      },
+      'Navigate to NGSIEM Incidents Extension'
+    );
+  }
+
+  /**
+   * Use the graph search feature to select a node
+   * The extension panel only appears when a node is selected in the workbench
+   */
+  private async clickGraphNode(): Promise<void> {
+    this.logger.info('Selecting a graph node to reveal extension panel');
+
+    // Wait for graph to render
+    const graphContainer = this.page.locator('canvas, svg').first();
+    await graphContainer.waitFor({ state: 'visible', timeout: 15000 });
+    this.logger.debug('Graph container is visible');
+
+    // Open search on graph
+    const searchButton = this.page.getByRole('button', { name: 'Search on graph' });
+    await searchButton.waitFor({ state: 'visible', timeout: 10000 });
+    await searchButton.click();
+    this.logger.debug('Clicked "Search on graph" button');
+
+    // Wait for search box to appear
+    const searchBox = this.page.getByRole('searchbox').first();
+    await searchBox.waitFor({ state: 'visible', timeout: 5000 });
+
+    // Search for common letter to get results
+    await searchBox.fill('e');
+    this.logger.debug('Entered search term: e');
+
+    // Wait for search results to appear
+    const resultButtons = this.page.locator('button').filter({ hasText: /Matches/i });
+    await resultButtons.first().waitFor({ state: 'visible', timeout: 10000 });
+
+    const resultCount = await resultButtons.count();
+    if (resultCount === 0) {
+      throw new Error('No search results found for graph node');
+    }
+
+    await resultButtons.first().click();
+    this.logger.debug('Clicked first search result');
+
+    // Wait for details panel to appear
+    await this.page.waitForLoadState('networkidle');
+    this.logger.success('Successfully selected a graph node');
+  }
+
   async openFirstDetection(): Promise<void> {
     return this.withTiming(
       async () => {
@@ -184,17 +310,26 @@ export class SocketNavigationPage extends BasePage {
   async verifyExtensionInSocket(extensionName: string): Promise<void> {
     return this.withTiming(
       async () => {
-        // Look for extension as a heading (not a tab)
-        const extension = this.page.locator('h1, h2, h3, h4, [role="heading"]').filter({ hasText: new RegExp(extensionName, 'i') });
+        // Look for extension as a button (expandable panel) or heading
+        // Use .first() to handle multiple matching elements
+        const extensionButton = this.page.getByRole('button', { name: new RegExp(extensionName, 'i') }).first();
+        const extensionHeading = this.page.locator('h1, h2, h3, h4, [role="heading"]').filter({ hasText: new RegExp(extensionName, 'i') }).first();
 
         // Use navigation timeout for socket extensions as they take time to load after detection opens
         const timeout = config.navigationTimeout;
 
-        // Scroll the extension into view if needed
-        await extension.scrollIntoViewIfNeeded({ timeout });
+        // Try button first (workbench view), then heading (detection details view)
+        const buttonVisible = await extensionButton.isVisible().catch(() => false);
 
-        // Wait for extension to be visible
-        await expect(extension).toBeVisible({ timeout });
+        if (buttonVisible) {
+          await extensionButton.scrollIntoViewIfNeeded({ timeout });
+          await expect(extensionButton).toBeVisible({ timeout });
+          this.logger.success(`Found extension "${extensionName}" as expandable button`);
+        } else {
+          await extensionHeading.scrollIntoViewIfNeeded({ timeout });
+          await expect(extensionHeading).toBeVisible({ timeout });
+          this.logger.success(`Found extension "${extensionName}" as heading`);
+        }
       },
       `Verify extension "${extensionName}" in socket`
     );

@@ -102,8 +102,8 @@ test.describe('Detection Translation App E2E Tests', () => {
     });
 
     test('should render Detection Translation extension in XDR socket', async () => {
-      await socketNavigationPage.navigateToXDRDetections();
-      await socketNavigationPage.openFirstDetection();
+      // XDR socket (xdr.detections.panel) requires Workbench navigation
+      await socketNavigationPage.navigateToXDRDetectionsExtension();
       await socketNavigationPage.verifyExtensionInSocket('Translation and custom context');
       logger.success('Extension rendered in XDR socket');
     });
@@ -117,8 +117,8 @@ test.describe('Detection Translation App E2E Tests', () => {
     });
 
     test('should render Detection Translation extension in NGSIEM socket', async () => {
-      await socketNavigationPage.navigateToNGSIEMIncidents();
-      await socketNavigationPage.openFirstDetection();
+      // NGSIEM socket (ngsiem.workbench.details) requires Workbench navigation
+      await socketNavigationPage.navigateToNGSIEMIncidentsExtension();
       await socketNavigationPage.verifyExtensionInSocket('Translation and custom context');
       logger.success('Extension rendered in NGSIEM socket');
     });
