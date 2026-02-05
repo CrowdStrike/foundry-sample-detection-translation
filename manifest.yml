@@ -22,7 +22,7 @@ ui:
           sockets:
             - ngsiem.workbench.details
             - activity.detections.details
-            - xdr.detections.panel
+            - xdr.cases.panel
           content_security_policy:
             connect-src: []
             style-src: []
