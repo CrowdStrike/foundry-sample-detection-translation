@@ -10,7 +10,7 @@ import { config } from '../config/TestConfig';
  * Supports testing Foundry extensions that appear in detection sockets:
  * - activity.detections.details (Endpoint Detections)
  * - xdr.detections.panel (XDR Detections)
- * - ngsiem.workbench.details (NGSIEM Cases)
+ * - ngsiem.workbench.details (NGSIEM Incidents)
  */
 export class SocketNavigationPage extends BasePage {
   constructor(page: Page) {
@@ -79,15 +79,15 @@ export class SocketNavigationPage extends BasePage {
    * Navigate to XDR Detections page (xdr.detections.panel socket)
    *
    * Note: Despite the socket name "xdr.detections.panel", this socket actually appears
-   * on the Cases page at /xdr/cases (previously Incidents at /xdr/incidents).
+   * on the Incidents page at /xdr/incidents (same as ngsiem.workbench.details).
    * The extension requires navigating to the Workbench view and clicking on a graph node.
    *
-   * Uses menu navigation: Menu → Next-Gen SIEM → Cases
+   * Uses menu navigation: Menu → Next-Gen SIEM → Incidents
    */
   async navigateToXDRDetections(): Promise<void> {
     return this.withTiming(
       async () => {
-        this.logger.info('Navigating to XDR Detections page (Cases)');
+        this.logger.info('Navigating to XDR Detections page (Incidents)');
 
         // Navigate to Foundry home first to ensure menu is available
         await this.navigateToPath('/foundry/home', 'Foundry home');
@@ -104,17 +104,17 @@ export class SocketNavigationPage extends BasePage {
         await ngsiemButton.click();
         await this.page.waitForLoadState('networkidle');
 
-        // Click "Cases" - use test selector with explicit wait for menu to stabilize
-        const casesLink = this.page.getByTestId('section-link').filter({ hasText: /Cases/i });
-        await casesLink.waitFor({ state: 'visible', timeout: 10000 });
-        await casesLink.click();
+        // Click "Incidents" - use test selector with explicit wait for menu to stabilize
+        const incidentsLink = this.page.getByTestId('section-link').filter({ hasText: /Incidents/i });
+        await incidentsLink.waitFor({ state: 'visible', timeout: 10000 });
+        await incidentsLink.click();
 
         await this.page.waitForLoadState('networkidle');
 
         const pageTitle = this.page.locator('h1, [role="heading"]').first();
         await expect(pageTitle).toBeVisible({ timeout: 10000 });
 
-        this.logger.success('Navigated to XDR Detections page (Cases)');
+        this.logger.success('Navigated to XDR Detections page (Incidents)');
       },
       'Navigate to XDR Detections'
     );
@@ -129,26 +129,25 @@ export class SocketNavigationPage extends BasePage {
       async () => {
         this.logger.info('Navigating to XDR extension in Workbench');
 
-        // Navigate to XDR detections page (Cases)
+        // Navigate to XDR detections page (Incidents)
         await this.navigateToXDRDetections();
 
-        // Wait for cases to load
+        // Wait for incidents to load
         await this.page.waitForLoadState('networkidle');
 
-        // Click on first case to open flyout dialog
-        const firstCaseButton = this.page.locator('[role="gridcell"] button').first();
-        await firstCaseButton.waitFor({ state: 'visible', timeout: 10000 });
-        await firstCaseButton.click();
+        // Click on first incident to open details panel
+        const firstIncidentButton = this.page.locator('[role="gridcell"] button').first();
+        await firstIncidentButton.waitFor({ state: 'visible', timeout: 10000 });
+        await firstIncidentButton.click();
 
-        // Wait for the flyout dialog to appear
-        const dialog = this.page.locator('[role="dialog"]');
-        await dialog.waitFor({ state: 'visible', timeout: 15000 });
-        this.logger.debug('Case flyout dialog opened');
+        // Wait for incident details to load
+        await this.page.waitForLoadState('networkidle');
 
-        // Click "See full case" link to navigate to the case Workbench
-        const seeFullCaseLink = dialog.getByRole('link', { name: /See full case/i });
-        await seeFullCaseLink.waitFor({ state: 'visible', timeout: 10000 });
-        await seeFullCaseLink.click();
+        // Navigate to full incident (Workbench view)
+        const seeFullIncidentLink = this.page.getByRole('link', { name: 'See full incident' });
+        await seeFullIncidentLink.waitFor({ state: 'visible', timeout: 10000 });
+        await seeFullIncidentLink.click();
+        this.logger.debug('Clicked See full incident link');
 
         // Wait for workbench to load
         await this.page.waitForLoadState('networkidle');
@@ -163,13 +162,13 @@ export class SocketNavigationPage extends BasePage {
   }
 
   /**
-   * Navigate to Cases page (ngsiem.workbench.details socket)
-   * Uses menu navigation: Menu → Next-Gen SIEM → Cases
+   * Navigate to NGSIEM Incidents page (ngsiem.workbench.details socket)
+   * Uses menu navigation: Menu → Next-Gen SIEM → Incidents
    */
-  async navigateToNGSIEMCases(): Promise<void> {
+  async navigateToNGSIEMIncidents(): Promise<void> {
     return this.withTiming(
       async () => {
-        this.logger.info('Navigating to Cases via Next-Gen SIEM menu');
+        this.logger.info('Navigating to NGSIEM Incidents page');
 
         // Navigate to Foundry home first to ensure menu is available
         await this.navigateToPath('/foundry/home', 'Foundry home');
@@ -186,51 +185,50 @@ export class SocketNavigationPage extends BasePage {
         await ngsiemButton.click();
         await this.page.waitForLoadState('networkidle');
 
-        // Click "Cases" - use test selector with explicit wait for menu to stabilize
-        const casesLink = this.page.getByTestId('section-link').filter({ hasText: /Cases/i });
-        await casesLink.waitFor({ state: 'visible', timeout: 10000 });
-        await casesLink.click();
+        // Click "Incidents" - use test selector with explicit wait for menu to stabilize
+        const incidentsLink = this.page.getByTestId('section-link').filter({ hasText: /Incidents/i });
+        await incidentsLink.waitFor({ state: 'visible', timeout: 10000 });
+        await incidentsLink.click();
 
         await this.page.waitForLoadState('networkidle');
 
         const pageTitle = this.page.locator('h1, [role="heading"]').first();
         await expect(pageTitle).toBeVisible({ timeout: 10000 });
 
-        this.logger.success('Navigated to Cases page via menu');
+        this.logger.success('Navigated to NGSIEM Incidents page');
       },
-      'Navigate to Cases via menu'
+      'Navigate to NGSIEM Incidents'
     );
   }
 
   /**
-   * Navigate to NGSIEM Cases extension via Workbench
+   * Navigate to NGSIEM Incidents extension via Workbench
    * The ngsiem.workbench.details socket requires selecting a graph node in the Workbench
    */
-  async navigateToNGSIEMCasesExtension(): Promise<void> {
+  async navigateToNGSIEMIncidentsExtension(): Promise<void> {
     return this.withTiming(
       async () => {
         this.logger.info('Navigating to NGSIEM extension in Workbench');
 
-        // Navigate to Cases page
-        await this.navigateToNGSIEMCases();
+        // Navigate to NGSIEM incidents page
+        await this.navigateToNGSIEMIncidents();
 
-        // Wait for cases to load
+        // Wait for incidents to load
         await this.page.waitForLoadState('networkidle');
 
-        // Click on first case to open flyout dialog
-        const firstCaseButton = this.page.locator('[role="gridcell"] button').first();
-        await firstCaseButton.waitFor({ state: 'visible', timeout: 10000 });
-        await firstCaseButton.click();
+        // Click on first incident to open details panel
+        const firstIncidentButton = this.page.locator('[role="gridcell"] button').first();
+        await firstIncidentButton.waitFor({ state: 'visible', timeout: 10000 });
+        await firstIncidentButton.click();
 
-        // Wait for the flyout dialog to appear
-        const dialog = this.page.locator('[role="dialog"]');
-        await dialog.waitFor({ state: 'visible', timeout: 15000 });
-        this.logger.debug('Case flyout dialog opened');
+        // Wait for incident details to load
+        await this.page.waitForLoadState('networkidle');
 
-        // Click "See full case" link to navigate to the case Workbench
-        const seeFullCaseLink = dialog.getByRole('link', { name: /See full case/i });
-        await seeFullCaseLink.waitFor({ state: 'visible', timeout: 10000 });
-        await seeFullCaseLink.click();
+        // Navigate to full incident (Workbench view)
+        const seeFullIncidentLink = this.page.getByRole('link', { name: 'See full incident' });
+        await seeFullIncidentLink.waitFor({ state: 'visible', timeout: 10000 });
+        await seeFullIncidentLink.click();
+        this.logger.debug('Clicked See full incident link');
 
         // Wait for workbench to load
         await this.page.waitForLoadState('networkidle');
@@ -238,9 +236,9 @@ export class SocketNavigationPage extends BasePage {
         // Use graph search to select a node (extension only appears when a node is selected)
         await this.clickGraphNode();
 
-        this.logger.success('Navigated to Cases Workbench with extension visible');
+        this.logger.success('Navigated to NGSIEM Workbench with extension visible');
       },
-      'Navigate to NGSIEM Cases Extension'
+      'Navigate to NGSIEM Incidents Extension'
     );
   }
 
