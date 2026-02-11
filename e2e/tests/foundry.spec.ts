@@ -97,7 +97,7 @@ test.describe('Detection Translation App E2E Tests', () => {
   test.describe('Socket Extension - XDR Detections', () => {
     test('should navigate to XDR Detections page', async ({ page }) => {
       await socketNavigationPage.navigateToXDRDetections();
-      expect(page.url()).toContain('/xdr/incidents');
+      expect(page.url()).toContain('/xdr/cases');
       logger.success('Navigated to XDR Detections page');
     });
 
@@ -109,16 +109,16 @@ test.describe('Detection Translation App E2E Tests', () => {
     });
   });
 
-  test.describe('Socket Extension - NGSIEM Incidents', () => {
-    test('should navigate to NGSIEM Incidents page', async ({ page }) => {
-      await socketNavigationPage.navigateToNGSIEMIncidents();
-      expect(page.url()).toContain('/xdr/incidents');
-      logger.success('Navigated to NGSIEM Incidents page');
+  test.describe('Socket Extension - NGSIEM Cases', () => {
+    test('should navigate to NGSIEM Cases page', async ({ page }) => {
+      await socketNavigationPage.navigateToNGSIEMCases();
+      expect(page.url()).toContain('/xdr/cases');
+      logger.success('Navigated to NGSIEM Cases page');
     });
 
     test('should render Detection Translation extension in NGSIEM socket', async () => {
       // NGSIEM socket (ngsiem.workbench.details) requires Workbench navigation
-      await socketNavigationPage.navigateToNGSIEMIncidentsExtension();
+      await socketNavigationPage.navigateToNGSIEMCasesExtension();
       await socketNavigationPage.verifyExtensionInSocket('Translation and custom context');
       logger.success('Extension rendered in NGSIEM socket');
     });
