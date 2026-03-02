@@ -13,7 +13,7 @@ updates:
       - dependency-name: "actions/setup-node"
         versions: [">=6.3.0"]
       - dependency-name: "actions/cache"
-        versions: [">=5.0.0"]
+        versions: [">=5.1.0"]
       - dependency-name: "actions/upload-artifact"
         versions: [">=7.0.0"]
       - dependency-name: "pnpm/action-setup"
