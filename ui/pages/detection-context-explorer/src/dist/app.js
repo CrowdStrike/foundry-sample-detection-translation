@@ -3907,7 +3907,7 @@ var hasRequiredScheduler_production;
 function requireScheduler_production () {
 	if (hasRequiredScheduler_production) return scheduler_production;
 	hasRequiredScheduler_production = 1;
-	(function (exports) {
+	(function (exports$1) {
 
 		function push(heap, node) {
 		  var index = heap.length;
@@ -3941,16 +3941,16 @@ function requireScheduler_production () {
 		  var diff = a.sortIndex - b.sortIndex;
 		  return 0 !== diff ? diff : a.id - b.id;
 		}
-		exports.unstable_now = void 0;
+		exports$1.unstable_now = void 0;
 		if ("object" === typeof performance && "function" === typeof performance.now) {
 		  var localPerformance = performance;
-		  exports.unstable_now = function () {
+		  exports$1.unstable_now = function () {
 		    return localPerformance.now();
 		  };
 		} else {
 		  var localDate = Date,
 		    initialTime = localDate.now();
-		  exports.unstable_now = function () {
+		  exports$1.unstable_now = function () {
 		    return localDate.now() - initialTime;
 		  };
 		}
@@ -3985,12 +3985,12 @@ function requireScheduler_production () {
 		  frameInterval = 5,
 		  startTime = -1;
 		function shouldYieldToHost() {
-		  return needsPaint ? true : exports.unstable_now() - startTime < frameInterval ? false : true;
+		  return needsPaint ? true : exports$1.unstable_now() - startTime < frameInterval ? false : true;
 		}
 		function performWorkUntilDeadline() {
 		  needsPaint = false;
 		  if (isMessageLoopRunning) {
-		    var currentTime = exports.unstable_now();
+		    var currentTime = exports$1.unstable_now();
 		    startTime = currentTime;
 		    var hasMoreWork = true;
 		    try {
@@ -4008,7 +4008,7 @@ function requireScheduler_production () {
 		                currentTask.callback = null;
 		                currentPriorityLevel = currentTask.priorityLevel;
 		                var continuationCallback = callback(currentTask.expirationTime <= currentTime);
-		                currentTime = exports.unstable_now();
+		                currentTime = exports$1.unstable_now();
 		                if ("function" === typeof continuationCallback) {
 		                  currentTask.callback = continuationCallback;
 		                  advanceTimers(currentTime);
@@ -4052,25 +4052,25 @@ function requireScheduler_production () {
 		};
 		function requestHostTimeout(callback, ms) {
 		  taskTimeoutID = localSetTimeout(function () {
-		    callback(exports.unstable_now());
+		    callback(exports$1.unstable_now());
 		  }, ms);
 		}
-		exports.unstable_IdlePriority = 5;
-		exports.unstable_ImmediatePriority = 1;
-		exports.unstable_LowPriority = 4;
-		exports.unstable_NormalPriority = 3;
-		exports.unstable_Profiling = null;
-		exports.unstable_UserBlockingPriority = 2;
-		exports.unstable_cancelCallback = function (task) {
+		exports$1.unstable_IdlePriority = 5;
+		exports$1.unstable_ImmediatePriority = 1;
+		exports$1.unstable_LowPriority = 4;
+		exports$1.unstable_NormalPriority = 3;
+		exports$1.unstable_Profiling = null;
+		exports$1.unstable_UserBlockingPriority = 2;
+		exports$1.unstable_cancelCallback = function (task) {
 		  task.callback = null;
 		};
-		exports.unstable_forceFrameRate = function (fps) {
+		exports$1.unstable_forceFrameRate = function (fps) {
 		  0 > fps || 125 < fps ? console.error("forceFrameRate takes a positive int between 0 and 125, forcing frame rates higher than 125 fps is not supported") : frameInterval = 0 < fps ? Math.floor(1e3 / fps) : 5;
 		};
-		exports.unstable_getCurrentPriorityLevel = function () {
+		exports$1.unstable_getCurrentPriorityLevel = function () {
 		  return currentPriorityLevel;
 		};
-		exports.unstable_next = function (eventHandler) {
+		exports$1.unstable_next = function (eventHandler) {
 		  switch (currentPriorityLevel) {
 		    case 1:
 		    case 2:
@@ -4088,10 +4088,10 @@ function requireScheduler_production () {
 		    currentPriorityLevel = previousPriorityLevel;
 		  }
 		};
-		exports.unstable_requestPaint = function () {
+		exports$1.unstable_requestPaint = function () {
 		  needsPaint = true;
 		};
-		exports.unstable_runWithPriority = function (priorityLevel, eventHandler) {
+		exports$1.unstable_runWithPriority = function (priorityLevel, eventHandler) {
 		  switch (priorityLevel) {
 		    case 1:
 		    case 2:
@@ -4110,8 +4110,8 @@ function requireScheduler_production () {
 		    currentPriorityLevel = previousPriorityLevel;
 		  }
 		};
-		exports.unstable_scheduleCallback = function (priorityLevel, callback, options) {
-		  var currentTime = exports.unstable_now();
+		exports$1.unstable_scheduleCallback = function (priorityLevel, callback, options) {
+		  var currentTime = exports$1.unstable_now();
 		  "object" === typeof options && null !== options ? (options = options.delay, options = "number" === typeof options && 0 < options ? currentTime + options : currentTime) : options = currentTime;
 		  switch (priorityLevel) {
 		    case 1:
@@ -4141,8 +4141,8 @@ function requireScheduler_production () {
 		  options > currentTime ? (priorityLevel.sortIndex = options, push(timerQueue, priorityLevel), null === peek(taskQueue) && priorityLevel === peek(timerQueue) && (isHostTimeoutScheduled ? (localClearTimeout(taskTimeoutID), taskTimeoutID = -1) : isHostTimeoutScheduled = true, requestHostTimeout(handleTimeout, options - currentTime))) : (priorityLevel.sortIndex = timeout, push(taskQueue, priorityLevel), isHostCallbackScheduled || isPerformingWork || (isHostCallbackScheduled = true, isMessageLoopRunning || (isMessageLoopRunning = true, schedulePerformWorkUntilDeadline())));
 		  return priorityLevel;
 		};
-		exports.unstable_shouldYield = shouldYieldToHost;
-		exports.unstable_wrapCallback = function (callback) {
+		exports$1.unstable_shouldYield = shouldYieldToHost;
+		exports$1.unstable_wrapCallback = function (callback) {
 		  var parentPriorityLevel = currentPriorityLevel;
 		  return function () {
 		    var previousPriorityLevel = currentPriorityLevel;
@@ -4407,7 +4407,7 @@ function requireClient () {
 var clientExports = requireClient();
 var ReactDOM = /*@__PURE__*/getDefaultExportFromCjs(clientExports);
 
-/*! @license DOMPurify 3.3.1 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/3.3.1/LICENSE */
+/*! @license DOMPurify 3.3.2 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/3.3.2/LICENSE */
 
 const {
   entries,
@@ -4702,7 +4702,7 @@ const _createHooksMap = function _createHooksMap() {
 function createDOMPurify() {
   let window = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : getGlobal();
   const DOMPurify = root => createDOMPurify(root);
-  DOMPurify.version = '3.3.1';
+  DOMPurify.version = '3.3.2';
   DOMPurify.removed = [];
   if (!window || !window.document || window.document.nodeType !== NODE_TYPE.document || !window.Element) {
     // Not running in a browser, provide a factory function
@@ -4997,7 +4997,7 @@ function createDOMPurify() {
     /* Parse profile info */
     if (USE_PROFILES) {
       ALLOWED_TAGS = addToSet({}, text);
-      ALLOWED_ATTR = [];
+      ALLOWED_ATTR = create(null);
       if (USE_PROFILES.html === true) {
         addToSet(ALLOWED_TAGS, html$1);
         addToSet(ALLOWED_ATTR, html);
@@ -5017,6 +5017,13 @@ function createDOMPurify() {
         addToSet(ALLOWED_ATTR, mathMl);
         addToSet(ALLOWED_ATTR, xml);
       }
+    }
+    /* Prevent function-based ADD_ATTR / ADD_TAGS from leaking across calls */
+    if (!objectHasOwnProperty(cfg, 'ADD_TAGS')) {
+      EXTRA_ELEMENT_HANDLING.tagCheck = null;
+    }
+    if (!objectHasOwnProperty(cfg, 'ADD_ATTR')) {
+      EXTRA_ELEMENT_HANDLING.attributeCheck = null;
     }
     /* Merge configuration parameters */
     if (cfg.ADD_TAGS) {
@@ -5415,6 +5422,10 @@ function createDOMPurify() {
    */
   // eslint-disable-next-line complexity
   const _isValidAttribute = function _isValidAttribute(lcTag, lcName, value) {
+    /* FORBID_ATTR must always win, even if ADD_ATTR predicate would allow it */
+    if (FORBID_ATTR[lcName]) {
+      return false;
+    }
     /* Make sure attribute cannot clobber */
     if (SANITIZE_DOM && (lcName === 'id' || lcName === 'name') && (value in document || value in formElement)) {
       return false;
@@ -5507,7 +5518,7 @@ function createDOMPurify() {
         value = SANITIZE_NAMED_PROPS_PREFIX + value;
       }
       /* Work around a security issue with comments inside attributes */
-      if (SAFE_FOR_XML && regExpTest(/((--!?|])>)|<\/(style|title|textarea)/i, value)) {
+      if (SAFE_FOR_XML && regExpTest(/((--!?|])>)|<\/(style|script|title|xmp|textarea|noscript|iframe|noembed|noframes)/i, value)) {
         _removeAttribute(name, currentNode);
         continue;
       }
