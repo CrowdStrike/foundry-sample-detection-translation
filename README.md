@@ -86,7 +86,10 @@ Once the deployment has finished, you can release the app:
 foundry apps release
 ```
 
-Next, go to **Foundry** > **App catalog**, find your app, and install it. You will be requested to add the API credentials for the app, you can create them in Support and resources > API clients and keys.
+Next, go to **Foundry** > **App catalog**, find your app, and install it. You will be prompted to provide API credentials. Create an API client at **Support and resources** > **API clients and keys** with the following scopes:
+
+- **Alerts** - Read
+- **Message Center** - Read
 
 Once it's installed you can find the **Translation and custom context** extension in the right sidebar of detections:
 
