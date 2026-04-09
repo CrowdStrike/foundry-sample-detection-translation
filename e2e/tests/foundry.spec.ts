@@ -48,7 +48,7 @@ test.describe('Detection Translation App E2E Tests', () => {
       await detectionContextExplorerPage.navigateToInstalledApp();
 
       // Verify iframe is present
-      const iframe = detectionContextExplorerPage.page.locator('iframe');
+      const iframe = detectionContextExplorerPage.page.locator('iframe[name="portal"]');
       await expect(iframe).toBeVisible({ timeout: 15000 });
 
       logger.success('Detection Context Explorer iframe loaded successfully');
@@ -57,7 +57,7 @@ test.describe('Detection Translation App E2E Tests', () => {
     test('should verify app content renders without JavaScript errors', async ({ page }) => {
       await detectionContextExplorerPage.navigateToInstalledApp();
 
-      const iframe = page.frameLocator('iframe');
+      const iframe = page.frameLocator('iframe[name="portal"]');
       const contentArea = iframe.locator('body');
       await expect(contentArea).toBeVisible({ timeout: 15000 });
       logger.success('App content rendered without JavaScript errors');
@@ -66,10 +66,10 @@ test.describe('Detection Translation App E2E Tests', () => {
     test('should verify UI loads without errors', async ({ page }) => {
       await detectionContextExplorerPage.navigateToInstalledApp();
 
-      const iframe = page.locator('iframe');
+      const iframe = page.locator('iframe[name="portal"]');
       await expect(iframe).toBeVisible({ timeout: 15000 });
 
-      const iframeContent = page.frameLocator('iframe');
+      const iframeContent = page.frameLocator('iframe[name="portal"]');
       const bodyContent = iframeContent.locator('body');
       await expect(bodyContent).toBeVisible({ timeout: 15000 });
 

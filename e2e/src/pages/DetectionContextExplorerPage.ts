@@ -40,10 +40,10 @@ export class DetectionContextExplorerPage extends BasePage {
     this.logger.success(`Successfully navigated to Foundry app page`);
 
     try {
-      await expect(this.page.locator('iframe')).toBeVisible({ timeout: 15000 });
+      await expect(this.page.locator('iframe[name="portal"]')).toBeVisible({ timeout: 15000 });
       this.logger.success('App iframe is visible');
 
-      const iframe = this.page.frameLocator('iframe');
+      const iframe = this.page.frameLocator('iframe[name="portal"]');
       const heading = iframe.getByRole('heading', { name: /Detection Context Explorer/i });
 
       await expect(heading).toBeVisible({ timeout: 10000 });
@@ -51,7 +51,7 @@ export class DetectionContextExplorerPage extends BasePage {
     } catch (error) {
       this.logger.warn(`App content not fully visible - may still be loading`);
 
-      const iframeExists = await this.page.locator('iframe').isVisible({ timeout: 3000 });
+      const iframeExists = await this.page.locator('iframe[name="portal"]').isVisible({ timeout: 3000 });
       if (iframeExists) {
         this.logger.info('Iframe exists but content may still be loading');
       } else {
@@ -138,7 +138,7 @@ export class DetectionContextExplorerPage extends BasePage {
         await this.retryPageLoadAfter404();
       }
 
-      const iframe = this.page.locator('iframe');
+      const iframe = this.page.locator('iframe[name="portal"]');
       await iframe.waitFor({ state: 'visible', timeout: 30000 });
       await this.verifyPageLoaded();
       return true;
