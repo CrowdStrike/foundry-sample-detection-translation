@@ -37,7 +37,7 @@ setup('install app', async ({ page }) => {
         await option.click();
       }
 
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState('domcontentloaded');
     },
   });
 });
