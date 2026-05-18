@@ -25,12 +25,12 @@
     }
   },
   "dependencies": {
-    "dompurify": "3.3.3",
+    "dompurify": "3.4.0",
     "esbuild": "0.25.9"
   },
   "devDependencies": {
-    "@babel/core": "7.22.5",
-    "@babel/preset-env": "7.22.5",
+    "@babel/core": "7.29.0",
+    "@babel/preset-env": "7.29.5",
     "@testing-library/dom": "10.4.1",
     "babel-jest": "30.1.2",
     "jest": "30.1.2",
