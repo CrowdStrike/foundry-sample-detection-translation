@@ -3734,9 +3734,6 @@
     }
   },
   "info": {
-    "contact": {
-      "email": "javier.carrasco@crowdstrike.com"
-    },
     "description": "Crowdstrike alerts and message-center APIs.",
     "title": "Crowdstrike alerts and message-center",
     "version": ""
