@@ -18,3 +18,7 @@ updates:
         versions: [">=7.0.0"]
       - dependency-name: "pnpm/action-setup"
         versions: [">=4.3.0"]
+  - package-ecosystem: "pre-commit"
+    directory: "/"
+    schedule:
+      interval: weekly
